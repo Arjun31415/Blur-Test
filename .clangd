@@ -1,0 +1,7 @@
+CompileFlags:
+  Remove:
+    - -forward-unknown-to-host-compiler
+    - --generate-code*
+    - --relocatable-device-code*
+    - --use_fast_math
+    - --generate-line-info
