@@ -12,6 +12,15 @@
 
 cv::cuda::GpuMat ginput, goutput;
 
+/**
+ * @brief do a safe call to CUDA functions and handle the error along with user
+ * specified message
+ *
+ * @param err CUDA error code
+ * @param msg user specified message
+ * @param file_name the name of the file from which the error occurred
+ * @param line_number the line at which error occurred
+ */
 static inline void _safe_cuda_call(cudaError err, const char *msg,
 								   const char *file_name, const int line_number)
 {
@@ -23,9 +32,22 @@ static inline void _safe_cuda_call(cudaError err, const char *msg,
 		exit(EXIT_FAILURE);
 	}
 }
+/**
+ * @brief a macro for sage calling CUDA functions
+ * @param call the CUDA function call
+ * @param msg user specified message
+ */
 
 #define SAFE_CALL(call, msg) _safe_cuda_call((call), (msg), __FILE__, __LINE__)
 
+/**
+ * @brief generate the gaussian kernel with given kernel size and standard
+ * deviation
+ *
+ * @param kernel the array in which the weights are stored
+ * @param n the size of the kernel, t.e. n x n kernel is created
+ * @param sigma  the standard deviation
+ */
 __host__ void generate_gaussian_kernel(float *kernel, const int n,
 									   const float sigma = 1)
 {
@@ -57,13 +79,20 @@ __host__ void generate_gaussian_kernel(float *kernel, const int n,
 /**
  * @brief      Sets the value of a uchar type.
  *
- * @param[in]  val   The value
+ * @param  val   The value
  * @param      out   The output
  */
+
 __device__ __forceinline__ void set_value(const int &val, uchar &out)
 {
 	out = val;
 }
+/**
+ * @brief set the value for a floating point type.
+ *
+ * @param val  the value
+ * @param out the output
+ */
 __device__ __forceinline__ void set_value(const float &val, float &out)
 {
 	out = val;
@@ -246,7 +275,7 @@ __host__ void gaussian_blur(const cv::Mat &input, cv::Mat &output,
 						 sizeof(float) * n * n, cudaMemcpyHostToDevice),
 			  "Unable to copy kernel");
 	ginput.upload(input);
-    goutput.upload(input);
+	goutput.upload(input);
 	call_gaussian_blur(d_gauss_kernel, n, ginput, goutput);
 	goutput.download(output);
 	gaussian_blur_exit(d_gauss_kernel);
@@ -278,7 +307,7 @@ int main(int argc, char **argv)
 
 	// Call the wrapper function
 	gaussian_blur_init(input, output);
-	gaussian_blur(input, output,5,1.7);
+	gaussian_blur(input, output, 5, 1.7);
 
 	// Show the input and output
 	cv::imshow("Output", output);
@@ -301,8 +330,7 @@ int main(int argc, char **argv)
 		}
 		std::cout << cv::getWindowProperty(mTitle, cv::WND_PROP_VISIBLE)
 				  << "\n";
-		if (cv::getWindowProperty(mTitle, cv::WND_PROP_VISIBLE) == 0)
-			return 0;
+		if (cv::getWindowProperty(mTitle, cv::WND_PROP_VISIBLE) == 0) return 0;
 
 	} while (true);
 
