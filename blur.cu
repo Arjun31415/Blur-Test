@@ -395,8 +395,6 @@ int main(int argc, char **argv)
 			cv::destroyAllWindows();
 			return 0;
 		}
-		std::cout << cv::getWindowProperty(mTitle, cv::WND_PROP_VISIBLE)
-				  << "\n";
 		if (cv::getWindowProperty(mTitle, cv::WND_PROP_VISIBLE) == 0) return 0;
 
 	} while (true);
