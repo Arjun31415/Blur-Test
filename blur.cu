@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @brief convolution blurring in Nvidia CUDA
+ * @author Arjun31415
+ */
+
 #undef __noinline__
 #include <cuda_runtime.h>
 #include <iostream>
@@ -82,11 +88,11 @@ __host__ void generate_gaussian_kernel(float *kernel, const int n,
  * @param  val   The value
  * @param      out   The output
  */
-
 __device__ __forceinline__ void set_value(const int &val, uchar &out)
 {
 	out = val;
 }
+
 /**
  * @brief set the value for a floating point type.
  *
@@ -97,10 +103,25 @@ __device__ __forceinline__ void set_value(const float &val, float &out)
 {
 	out = val;
 };
+
+/**
+ * @brief set the value for a float3 tupe. All the 3 fields will have the value
+ * `val`
+ *
+ * @param val the value
+ * @param out the output
+ */
 __device__ __forceinline__ void set_value(const float &val, float3 &out)
 {
 	out.x = val, out.y = val, out.z = val;
 }
+
+/**
+ * @brief set the value for a unsigned char3 type with a flot3 type
+ *
+ * @param val the value to set
+ * @param out the ouput
+ */
 __device__ __forceinline__ void set_value(const float3 &val, uchar3 &out)
 {
 	out.x = val.x;
@@ -136,10 +157,26 @@ __device__ __forceinline__ uchar3 subtract_value(uchar3 in1, uchar3 in2)
 	out.z = in1.z - in2.z;
 	return out;
 }
+
+/**
+ * @brief add two values and return it
+ *
+ * @param in1 input 1
+ * @param in2 intput 2
+ * @return returns the added value
+ */
 __device__ __forceinline__ float3 add_value(float3 in1, float3 in2)
 {
 	return {in1.x + in2.x, in1.y + in2.y, in1.z + in2.z};
 }
+
+/**
+ * @brief add two floating point values
+ *
+ * @param in1 value 1
+ * @param in2 value 2
+ * @return the sum
+ */
 __device__ __forceinline__ float add_value(float in1, float in2)
 {
 	return in1 + in2;
@@ -157,46 +194,62 @@ __device__ __forceinline__ uchar subtract_value(uchar in1, uchar in2)
 {
 	return in1 - in2;
 }
+/**
+ * @brief multiplication for float and uchar3 types. Multiply each filed in
+ * uchar3 with the float value and return a flolat3
+ *
+ * @param x Input 1
+ * @param y Input 2
+ * @return value after multiplication
+ */
 __device__ __forceinline__ float3 multiply_value(const float &x,
 												 const uchar3 &y)
 {
 	return {x * (float)y.x, x * (float)y.y, x * (float)y.z};
 }
+
+/**
+ * @brief multiplication for float and uchar4 types
+ *
+ * @param x Input 1
+ * @param y Input 2
+ * @return x*y
+ */
 __device__ __forceinline__ float multiply_value(const float &x, const uchar &y)
 {
 	return x * (float)y;
 }
-__device__ __forceinline__ void print_value(const uchar3 &x)
-{
-	printf("(%d, %d, %d)", x.x, x.y, x.z);
-}
-__device__ __forceinline__ void print_value(const uchar &x) { printf("%d", x); }
-__device__ __forceinline__ void print_value(const float3 &x)
-{
-	printf("(%f, %f, %f)", x.x, x.y, x.z);
-}
-__device__ __forceinline__ void print_value(const uchar &x, const uchar &y)
-{
-	printf("(%d, %d)", x, y);
-}
-__device__ __forceinline__ void print_value(const uchar3 &x, const uchar3 &y)
-{
-	printf("((%d,%d,%d), (%d,%d,%d))\n", x.x, x.y, x.z, y.x, y.y, y.z);
-}
+
+/**
+ * @brief applys the gaussian blur convolution to the input image
+ *
+ * @tparam T_in The type of input image, i.e uchar for black and white, uchar3
+ for RGB, float3 etc
+ * @tparam T_out The type of output image
+ * @tparam F_cal The type for calculating intermediate sums and products
+ * @param kernel the kernel to apply the convolution
+ * @param n the dimension of the kernel (n x n)
+ * @param input the input image
+ * @param output the output image
+ */
 template <typename T_in, typename T_out, typename F_cal>
 __global__ void gaussian_blur(const float *kernel, int n,
 							  const cv::cuda::PtrStepSz<T_in> input,
 							  cv::cuda::PtrStepSz<T_out> output)
 {
+	// calculate the x & y position of the current image pixel
 	const int x = blockIdx.x * blockDim.x + threadIdx.x;
 	const int y = blockIdx.y * blockDim.y + threadIdx.y;
 
 	if (x >= input.cols || y >= input.rows) return;
+
 	const int mid = n / 2;
 	F_cal sum;
 	set_value(0, sum);
+	// synchronize all the threads till this potin
 	__syncthreads();
 
+	// loop over the n x n neighborhood of the current pixel
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < n; j++)
@@ -213,6 +266,13 @@ __global__ void gaussian_blur(const float *kernel, int n,
 	set_value(sum, result);
 	output(y, x) = result;
 }
+
+/**
+ * @brief free all the GPU resources
+ *
+ * @tparam Ts
+ * @param inputs varidaic list of resources
+ */
 template <class... Ts>
 void gaussian_blur_exit(Ts &&...inputs)
 {
@@ -221,17 +281,15 @@ void gaussian_blur_exit(Ts &&...inputs)
 	([&] { SAFE_CALL(cudaFree(inputs), "Unable to free"); }(), ...);
 }
 
-__device__ void print_kernel(float *k, int n)
-{
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-		{
-			printf("%f ", k[i * n + j]);
-		}
-		printf("\n");
-	}
-}
+/**
+ * @brief calls the gaussian_blur function appropriately based on the type of
+ * image
+ *
+ * @param d_kernel the kernel, stored on GPU device memory
+ * @param n the size of the kernel
+ * @param input the input image stored on the GPU
+ * @param output the output image stored on the GPU
+ */
 void call_gaussian_blur(float *d_kernel, const int &n,
 						const cv::cuda::GpuMat &input, cv::cuda::GpuMat &output)
 {
@@ -254,32 +312,41 @@ void call_gaussian_blur(float *d_kernel, const int &n,
 	}
 	cudaSafeCall(cudaGetLastError());
 }
+
+/**
+ * @brief the gaussian blur function which runs on the HOST CPU. It calls the
+ * `call_gaussian_blur` function after initialization of the appropriate values
+ * and kernel.
+ *
+ * @param input the input image stored on the CPU memory
+ * @param output the output image stored on the CPU memory
+ * @param n the size of the Gaussian kernel, defaults to 3
+ * @param sigma the standard deviation of the Gaussian kernel, defaults to 1.
+ */
 __host__ void gaussian_blur(const cv::Mat &input, cv::Mat &output,
 							const int n = 3, const float sigma = 1.0)
 {
 
 	std::vector<float> gauss_kernel_host(n * n);
 	generate_gaussian_kernel(gauss_kernel_host.data(), n, sigma);
-	/* for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-		{
-			std::cout << gauss_kernel_host[i * n + j] << " ";
-		}
-		std::cout << std::endl;
-	}
-	std::cin.get(); */
 	float *d_gauss_kernel;
 	cudaMalloc((void **)&d_gauss_kernel, n * n * sizeof(float));
 	SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
 						 sizeof(float) * n * n, cudaMemcpyHostToDevice),
 			  "Unable to copy kernel");
 	ginput.upload(input);
-	goutput.upload(input);
+	// goutput.upload(input);
 	call_gaussian_blur(d_gauss_kernel, n, ginput, goutput);
 	goutput.download(output);
 	gaussian_blur_exit(d_gauss_kernel);
 }
+
+/**
+ * @brief initialization for gaussian blurring operation
+ *
+ * @param input input image stored on the CPU
+ * @param output output image stored on the CPU
+ */
 void gaussian_blur_init(const cv::Mat &input, cv::Mat &output)
 {
 	ginput.create(input.rows, input.cols, input.type());
