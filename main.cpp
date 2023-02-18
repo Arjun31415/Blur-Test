@@ -104,26 +104,26 @@ void apply_kernel_multithreaded(const std::vector<std::vector<float>> &kernel,
 }
 int main(int argc, char **argv)
 {
-	const int n = 5;
-	std::vector<std::vector<float>> gauss_kernel(n, std::vector<float>(n));
-	generate_gaussian_kernel(gauss_kernel, n, 1.6);
-	for (auto &x : gauss_kernel)
-	{
+	/* for (auto &x : gauss_kernel) {
 		for (auto &y : x)
 		{
 			std::cout << y << " ";
 		}
 		std::cout << "\n";
-	}
+	} */
 
-	if (argc < 2)
+	if (argc < 3)
 	{
-		printf("usage: Blur_Test <Image_Path> [<Output_Path>]\n");
+		printf("usage: Blur_Test <kernel_size> <Image_Path> [<Output_Path>]\n");
 		return -1;
 	}
+	int n = atoi(argv[1]);
+	std::vector<std::vector<float>> gauss_kernel(n, std::vector<float>(n));
+	generate_gaussian_kernel(gauss_kernel, n, 1.6);
+
 	std::string mTitle = "Display Image";
 	Mat image;
-	image = imread(argv[1], 1);
+	image = imread(argv[2], 1);
 	if (!image.data)
 	{
 		printf("No image data \n");
@@ -135,7 +135,7 @@ int main(int argc, char **argv)
 	apply_kernel_multithreaded(gauss_kernel, image, new_img);
 	imshow(mTitle, image);
 	imshow("gaussian", new_img);
-	if (argc >= 3) imwrite(argv[2], new_img);
+	if (argc >= 4) imwrite(argv[3], new_img);
 	do
 	{
 
@@ -145,7 +145,6 @@ int main(int argc, char **argv)
 			cv::destroyAllWindows();
 			return 0;
 		}
-		std::cout << cv::getWindowProperty(mTitle, WND_PROP_VISIBLE) << "\n";
 		if (cv::getWindowProperty(mTitle, WND_PROP_VISIBLE) == 0)
 		{
 			return 0;

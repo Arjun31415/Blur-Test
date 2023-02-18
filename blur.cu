@@ -356,14 +356,15 @@ void gaussian_blur_init(const cv::Mat &input, cv::Mat &output)
 int main(int argc, char **argv)
 {
 
-	if (argc < 2)
+	if (argc < 3)
 	{
-		printf("usage: Blur_Test <Image_Path> [<Output_Path>]\n");
+		printf("usage: Blur_Test <kernel_size> <Image_Path> [<Output_Path>]\n");
 		return -1;
 	}
 	std::string mTitle = "Display Image";
 	cv::Mat input;
-	input = cv::imread(argv[1], 1);
+	int n = atoi(argv[1]);
+	input = cv::imread(argv[2], 1);
 	if (!input.data)
 	{
 		printf("No image data \n");
@@ -374,7 +375,7 @@ int main(int argc, char **argv)
 
 	// Call the wrapper function
 	gaussian_blur_init(input, output);
-	gaussian_blur(input, output, 5, 1.7);
+	gaussian_blur(input, output, n, 1.7);
 
 	// Show the input and output
 	cv::imshow("Output", output);
@@ -385,7 +386,7 @@ int main(int argc, char **argv)
 	/* namedWindow("gauss", cv::WINDOW_AUTOSIZE); */
 	imshow(mTitle, input);
 	/* imshow("gaussian", output); */
-	if (argc >= 3) imwrite(argv[2], output);
+	if (argc >= 4) imwrite(argv[3], output);
 	do
 	{
 
