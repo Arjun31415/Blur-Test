@@ -104,14 +104,6 @@ void apply_kernel_multithreaded(const std::vector<std::vector<float>> &kernel,
 }
 int main(int argc, char **argv)
 {
-	/* for (auto &x : gauss_kernel) {
-		for (auto &y : x)
-		{
-			std::cout << y << " ";
-		}
-		std::cout << "\n";
-	} */
-
 	if (argc < 3)
 	{
 		printf("usage: Blur_Test <kernel_size> <Image_Path> [<Output_Path>]\n");
