@@ -54,8 +54,8 @@ static inline void _safe_cuda_call(cudaError err, const char *msg,
  * @param n the size of the kernel, t.e. n x n kernel is created
  * @param sigma  the standard deviation
  */
-__host__ void generate_gaussian_kernel(float *kernel, const int n,
-									   const float sigma = 1)
+__host__ void generate_gaussian_kernel_2d(float *kernel, const int n,
+										  const float sigma = 1)
 {
 	int mean = n / 2;
 	float sumOfWeights = 0;
@@ -79,6 +79,25 @@ __host__ void generate_gaussian_kernel(float *kernel, const int n,
 		{
 			kernel[i * n + j] /= sumOfWeights;
 		}
+	}
+}
+
+__host__ void generate_gaussian_kernel_1d(float *kernel, const int n,
+										  const float sigma = 1)
+{
+	// Calculate the values of the kernel
+	float sum = 0.0f;
+	for (int i = 0; i < n; i++)
+	{
+		float x = i - (n - 1) / 2.0f;
+		kernel[i] = std::exp(-x * x / (2 * sigma * sigma));
+		sum += kernel[i];
+	}
+
+	// Normalize the kernel so that its sum equals 1
+	for (int i = 0; i < n; i++)
+	{
+		kernel[i] /= sum;
 	}
 }
 
@@ -209,6 +228,20 @@ __device__ __forceinline__ float3 multiply_value(const float &x,
 }
 
 /**
+ * @brief multiplication for float and float3 types. Multiply each filed in
+ * uchar3 with the float value and return a float3
+ *
+ * @param x Input 1
+ * @param y Input 2
+ * @return value after multiplication
+ */
+__device__ __forceinline__ float3 multiply_value(const float &x,
+												 const float3 &y)
+{
+	return {x * (float)y.x, x * (float)y.y, x * (float)y.z};
+}
+
+/**
  * @brief multiplication for float and uchar4 types
  *
  * @param x Input 1
@@ -266,6 +299,63 @@ __global__ void gaussian_blur(const float *kernel, int n,
 	set_value(sum, result);
 	output(y, x) = result;
 }
+template <typename T_in, typename T_out, typename F_cal>
+__global__ void gaussian_blur_x(float *kernel, int kernel_size,
+								const cv::cuda::PtrStepSz<T_in> input,
+								cv::cuda::PtrStepSz<T_out> output)
+{
+	int x = blockIdx.x * blockDim.x + threadIdx.x;
+	int y = blockIdx.y * blockDim.y + threadIdx.y;
+	const int radius = kernel_size / 2;
+	const int width = input.cols;
+	const int height = input.rows;
+
+	if (x >= input.cols || y >= input.rows) return;
+
+	F_cal pixel;
+	set_value(0, pixel);
+
+	for (int i = -radius; i <= radius; i++)
+	{
+		int idx = y * width + (x + i);
+		/* printf("%d\n", idx); */
+		if (idx >= 0 && idx < width * height)
+		{
+			const float weight = kernel[i + radius];
+			pixel = add_value(pixel, multiply_value(weight, input[idx]));
+		}
+	}
+	set_value(pixel, output(y, x));
+}
+
+template <typename T_in, typename T_out, typename F_cal>
+
+__global__ void gaussian_blur_y(float *kernel, int kernel_size,
+								const cv::cuda::PtrStepSz<T_in> input,
+								cv::cuda::PtrStepSz<T_out> output)
+{
+	int x = blockIdx.x * blockDim.x + threadIdx.x;
+	int y = blockIdx.y * blockDim.y + threadIdx.y;
+	const int radius = kernel_size / 2;
+	const int width = input.cols;
+	const int height = input.rows;
+
+	if (x >= input.cols || y >= input.rows) return;
+
+	F_cal pixel;
+	set_value(0, pixel);
+	float weight_sum = 0;
+	for (int i = -radius; i <= radius; i++)
+	{
+		int idx = (y + i) * width + x;
+		if (idx >= 0 && idx < width * height)
+		{
+			float weight = kernel[i + radius];
+			pixel = add_value(pixel, multiply_value(weight, input[idx]));
+		}
+	}
+	set_value(pixel, output(y, x)); //	output(y,x) = pixel;
+}
 
 /**
  * @brief free all the GPU resources
@@ -290,8 +380,9 @@ void gaussian_blur_exit(Ts &&...inputs)
  * @param input the input image stored on the GPU
  * @param output the output image stored on the GPU
  */
-void call_gaussian_blur(float *d_kernel, const int &n,
-						const cv::cuda::GpuMat &input, cv::cuda::GpuMat &output)
+void call_gaussian_blur_2d(float *d_kernel, const int &n,
+						   const cv::cuda::GpuMat &input,
+						   cv::cuda::GpuMat &output)
 {
 	CV_Assert(input.channels() == 1 || input.channels() == 3);
 	const dim3 block(16, 16);
@@ -312,7 +403,34 @@ void call_gaussian_blur(float *d_kernel, const int &n,
 	}
 	cudaSafeCall(cudaGetLastError());
 }
+void call_gaussian_blur_1d(float *d_kernel, const int &n,
+						   const cv::cuda::GpuMat &input,
+						   cv::cuda::GpuMat &output)
+{
+	CV_Assert(input.channels() == 1 || input.channels() == 3);
+	const int block_size = 16;
+	dim3 dimBlock(block_size, block_size);
+	dim3 dimGrid(cv::cuda::device::divUp(input.cols, dimBlock.x),
+				 cv::cuda::device::divUp(input.rows, dimBlock.y));
+	cv::cuda::GpuMat temp = input.clone();
+	// Apply the horizontal Gaussian blur
+	if (input.channels() == 1)
+	{
 
+		gaussian_blur_x<uchar, uchar, float>
+			<<<dimGrid, dimBlock>>>(d_kernel, n, input, temp);
+		gaussian_blur_y<uchar, uchar, float>
+			<<<dimGrid, dimBlock>>>(d_kernel, n, temp, output);
+	}
+	else if (input.channels() == 3)
+	{
+		gaussian_blur_x<uchar3, uchar3, float3>
+			<<<dimGrid, dimBlock>>>(d_kernel, n, input, temp);
+		gaussian_blur_y<uchar3, uchar3, float3>
+			<<<dimGrid, dimBlock>>>(d_kernel, n, temp, output);
+	}
+	cudaSafeCall(cudaGetLastError());
+}
 /**
  * @brief the gaussian blur function which runs on the HOST CPU. It calls the
  * `call_gaussian_blur` function after initialization of the appropriate values
@@ -324,19 +442,36 @@ void call_gaussian_blur(float *d_kernel, const int &n,
  * @param sigma the standard deviation of the Gaussian kernel, defaults to 1.
  */
 __host__ void gaussian_blur(const cv::Mat &input, cv::Mat &output,
-							const int n = 3, const float sigma = 1.0)
+							const int n = 3, const float sigma = 1.0,
+							bool two_d = true)
 {
-
-	std::vector<float> gauss_kernel_host(n * n);
-	generate_gaussian_kernel(gauss_kernel_host.data(), n, sigma);
-	float *d_gauss_kernel;
-	cudaMalloc((void **)&d_gauss_kernel, n * n * sizeof(float));
-	SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
-						 sizeof(float) * n * n, cudaMemcpyHostToDevice),
-			  "Unable to copy kernel");
 	ginput.upload(input);
+	std::vector<float> gauss_kernel_host;
+	float *d_gauss_kernel;
+	if (two_d)
+	{
+		std::cout << "2D" << std::endl;
+		gauss_kernel_host = std::vector<float>(n * n);
+		generate_gaussian_kernel_2d(gauss_kernel_host.data(), n, sigma);
+		cudaMalloc((void **)&d_gauss_kernel, n * n * sizeof(float));
+		SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
+							 sizeof(float) * n * n, cudaMemcpyHostToDevice),
+				  "Unable to copy kernel");
+		call_gaussian_blur_2d(d_gauss_kernel, n, ginput, goutput);
+	}
+	else
+	{
+		std::cout << "1D" << std::endl;
+
+		gauss_kernel_host = std::vector<float>(n);
+		generate_gaussian_kernel_1d(gauss_kernel_host.data(), n, sigma);
+		cudaMalloc((void **)&d_gauss_kernel, n * sizeof(float));
+		SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
+							 sizeof(float) * n, cudaMemcpyHostToDevice),
+				  "Unable to copy kernel");
+		call_gaussian_blur_1d(d_gauss_kernel, n, ginput, goutput);
+	}
 	// goutput.upload(input);
-	call_gaussian_blur(d_gauss_kernel, n, ginput, goutput);
 	goutput.download(output);
 	gaussian_blur_exit(d_gauss_kernel);
 }
@@ -375,7 +510,7 @@ int main(int argc, char **argv)
 
 	// Call the wrapper function
 	gaussian_blur_init(input, output);
-	gaussian_blur(input, output, n, 1.7);
+	gaussian_blur(input, output, n, 1.7, 0);
 
 	// Show the input and output
 	cv::imshow("Output", output);
