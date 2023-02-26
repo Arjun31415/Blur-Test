@@ -1,0 +1,72 @@
+\begin{theindex}
+
+  \item {add\_value}
+    \subitem {blur.cu}, \hyperpage{7}
+  \item {apply\_convolution}
+    \subitem {main.cpp}, \hyperpage{15}
+  \item {apply\_convolution\_multi\_threaded}
+    \subitem {main.cpp}, \hyperpage{16}
+  \item {apply\_kernel}
+    \subitem {main.cpp}, \hyperpage{16}
+  \item {apply\_kernel\_multithreaded}
+    \subitem {main.cpp}, \hyperpage{16}
+
+  \indexspace
+
+  \item {blur.cu}, \hyperpage{5}
+    \subitem {add\_value}, \hyperpage{7}
+    \subitem {call\_gaussian\_blur\_1d}, \hyperpage{8}
+    \subitem {call\_gaussian\_blur\_2d}, \hyperpage{8}
+    \subitem {gaussian\_blur}, \hyperpage{8, 9}
+    \subitem {gaussian\_blur\_exit}, \hyperpage{9}
+    \subitem {gaussian\_blur\_init}, \hyperpage{10}
+    \subitem {generate\_gaussian\_kernel\_1d}, \hyperpage{10}
+    \subitem {generate\_gaussian\_kernel\_2d}, \hyperpage{11}
+    \subitem {multiply\_value}, \hyperpage{11, 12}
+    \subitem {SAFE\_CALL}, \hyperpage{7}
+    \subitem {set\_value}, \hyperpage{12, 13}
+    \subitem {subtract\_value}, \hyperpage{14}
+
+  \indexspace
+
+  \item {call\_gaussian\_blur\_1d}
+    \subitem {blur.cu}, \hyperpage{8}
+  \item {call\_gaussian\_blur\_2d}
+    \subitem {blur.cu}, \hyperpage{8}
+
+  \indexspace
+
+  \item {gaussian\_blur}
+    \subitem {blur.cu}, \hyperpage{8, 9}
+  \item {gaussian\_blur\_exit}
+    \subitem {blur.cu}, \hyperpage{9}
+  \item {gaussian\_blur\_init}
+    \subitem {blur.cu}, \hyperpage{10}
+  \item {generate\_gaussian\_kernel}
+    \subitem {main.cpp}, \hyperpage{17}
+  \item {generate\_gaussian\_kernel\_1d}
+    \subitem {blur.cu}, \hyperpage{10}
+  \item {generate\_gaussian\_kernel\_2d}
+    \subitem {blur.cu}, \hyperpage{11}
+
+  \indexspace
+
+  \item {main.cpp}, \hyperpage{14}
+    \subitem {apply\_convolution}, \hyperpage{15}
+    \subitem {apply\_convolution\_multi\_threaded}, \hyperpage{16}
+    \subitem {apply\_kernel}, \hyperpage{16}
+    \subitem {apply\_kernel\_multithreaded}, \hyperpage{16}
+    \subitem {generate\_gaussian\_kernel}, \hyperpage{17}
+  \item {multiply\_value}
+    \subitem {blur.cu}, \hyperpage{11, 12}
+
+  \indexspace
+
+  \item {SAFE\_CALL}
+    \subitem {blur.cu}, \hyperpage{7}
+  \item {set\_value}
+    \subitem {blur.cu}, \hyperpage{12, 13}
+  \item {subtract\_value}
+    \subitem {blur.cu}, \hyperpage{14}
+
+\end{theindex}

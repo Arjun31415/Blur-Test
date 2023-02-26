@@ -4,7 +4,9 @@
  * @author Arjun31415
  */
 
+#include <cstring>
 #undef __noinline__
+#include <cuda_profiler_api.h>
 #include <cuda_runtime.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
@@ -15,8 +17,18 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
-
 cv::cuda::GpuMat ginput, goutput;
+
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
+void printProgress(double percentage)
+{
+	int val = (int)(percentage * 100);
+	int lpad = (int)(percentage * PBWIDTH);
+	int rpad = PBWIDTH - lpad;
+	printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+	fflush(stdout);
+}
 
 /**
  * @brief do a safe call to CUDA functions and handle the error along with user
@@ -51,7 +63,7 @@ static inline void _safe_cuda_call(cudaError err, const char *msg,
  * deviation
  *
  * @param kernel the array in which the weights are stored
- * @param n the size of the kernel, t.e. n x n kernel is created
+ * @param n the size of the kernel, t.e. n x n kernel is needed
  * @param sigma  the standard deviation
  */
 __host__ void generate_gaussian_kernel_2d(float *kernel, const int n,
@@ -82,6 +94,14 @@ __host__ void generate_gaussian_kernel_2d(float *kernel, const int n,
 	}
 }
 
+/**
+ * @brief generate a 1D gaussian kernel
+ *
+ * @param kernel the array in which the weights are stored
+ * @param n the size of the kernel. a 1D kernel of length n is needed
+ * @param sigma the standard deviation of the kernel
+ * @return
+ */
 __host__ void generate_gaussian_kernel_1d(float *kernel, const int n,
 										  const float sigma = 1)
 {
@@ -256,10 +276,10 @@ __device__ __forceinline__ float multiply_value(const float &x, const uchar &y)
 /**
  * @brief applys the gaussian blur convolution to the input image
  *
- * @tparam T_in The type of input image, i.e uchar for black and white, uchar3
- for RGB, float3 etc
- * @tparam T_out The type of output image
- * @tparam F_cal The type for calculating intermediate sums and products
+ * @tparam t_in the type of input image, i.e uchar for black and white, uchar3
+ for rgb, float3 etc
+ * @tparam t_out the type of output image
+ * @tparam f_cal the type for calculating intermediate sums and products
  * @param kernel the kernel to apply the convolution
  * @param n the dimension of the kernel (n x n)
  * @param input the input image
@@ -299,6 +319,18 @@ __global__ void gaussian_blur(const float *kernel, int n,
 	set_value(sum, result);
 	output(y, x) = result;
 }
+/*
+ * @brief applys the gaussian blur convolution to the input image along the
+x-axis
+ * @tparam t_in the type of input image, i.e uchar for black and white, uchar3
+ for rgb, float3 etc
+ * @tparam t_out the type of output image
+ * @tparam f_cal the type for calculating intermediate sums and products
+ * @param kernel the kernel to apply the convolution
+ * @param n the dimension of the kernel (n x n)
+ * @param input the input image
+ * @param output the output image
+*/
 template <typename T_in, typename T_out, typename F_cal>
 __global__ void gaussian_blur_x(float *kernel, int kernel_size,
 								const cv::cuda::PtrStepSz<T_in> input,
@@ -328,8 +360,19 @@ __global__ void gaussian_blur_x(float *kernel, int kernel_size,
 	set_value(pixel, output(y, x));
 }
 
+/*
+ * @brief applys the gaussian blur convolution to the input image along the
+y-axis
+ * @tparam t_in the type of input image, i.e uchar for black and white, uchar3
+ for rgb, float3 etc
+ * @tparam t_out the type of output image
+ * @tparam f_cal the type for calculating intermediate sums and products
+ * @param kernel the kernel to apply the convolution
+ * @param n the dimension of the kernel (n x n)
+ * @param input the input image
+ * @param output the output image
+*/
 template <typename T_in, typename T_out, typename F_cal>
-
 __global__ void gaussian_blur_y(float *kernel, int kernel_size,
 								const cv::cuda::PtrStepSz<T_in> input,
 								cv::cuda::PtrStepSz<T_out> output)
@@ -363,12 +406,16 @@ __global__ void gaussian_blur_y(float *kernel, int kernel_size,
  * @tparam Ts
  * @param inputs varidaic list of resources
  */
-template <class... Ts>
-void gaussian_blur_exit(Ts &&...inputs)
+template <typename ...Ts>
+void gaussian_blur_exit( bool remove_globals, Ts &&...inputs)
 {
-	ginput.release();
-	goutput.release();
+	if (remove_globals)
+	{
+		ginput.release();
+		goutput.release();
+	}
 	([&] { SAFE_CALL(cudaFree(inputs), "Unable to free"); }(), ...);
+
 }
 
 /**
@@ -403,6 +450,16 @@ void call_gaussian_blur_2d(float *d_kernel, const int &n,
 	}
 	cudaSafeCall(cudaGetLastError());
 }
+/**
+ * @brief calls the separable gaussian_blur function appropriately based on the
+ * type of image
+ *
+ * @param d_kernel the kernel, stored on GPU device memory
+ * @param n the size of the kernel
+ * @param input the input image stored on the GPU
+ * @param output the output image stored on the GPU
+ */
+
 void call_gaussian_blur_1d(float *d_kernel, const int &n,
 						   const cv::cuda::GpuMat &input,
 						   cv::cuda::GpuMat &output)
@@ -440,28 +497,30 @@ void call_gaussian_blur_1d(float *d_kernel, const int &n,
  * @param output the output image stored on the CPU memory
  * @param n the size of the Gaussian kernel, defaults to 3
  * @param sigma the standard deviation of the Gaussian kernel, defaults to 1.
+ * @param two_d whether to use the 2D gaussian blur kernel or two separable 1D
+ * gaussian blur kernels, defaults to true
  */
 __host__ void gaussian_blur(const cv::Mat &input, cv::Mat &output,
 							const int n = 3, const float sigma = 1.0,
-							bool two_d = true)
+							bool two_d = true, bool remove_globals = true)
 {
 	ginput.upload(input);
 	std::vector<float> gauss_kernel_host;
 	float *d_gauss_kernel;
 	if (two_d)
 	{
-		std::cout << "2D" << std::endl;
 		gauss_kernel_host = std::vector<float>(n * n);
 		generate_gaussian_kernel_2d(gauss_kernel_host.data(), n, sigma);
 		cudaMalloc((void **)&d_gauss_kernel, n * n * sizeof(float));
 		SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
 							 sizeof(float) * n * n, cudaMemcpyHostToDevice),
 				  "Unable to copy kernel");
+		/* cudaProfilerStart(); */
 		call_gaussian_blur_2d(d_gauss_kernel, n, ginput, goutput);
+		/* cudaProfilerStop(); */
 	}
 	else
 	{
-		std::cout << "1D" << std::endl;
 
 		gauss_kernel_host = std::vector<float>(n);
 		generate_gaussian_kernel_1d(gauss_kernel_host.data(), n, sigma);
@@ -469,11 +528,13 @@ __host__ void gaussian_blur(const cv::Mat &input, cv::Mat &output,
 		SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
 							 sizeof(float) * n, cudaMemcpyHostToDevice),
 				  "Unable to copy kernel");
+		/* cudaProfilerStart(); */
 		call_gaussian_blur_1d(d_gauss_kernel, n, ginput, goutput);
+		/* cudaProfilerStop(); */
 	}
 	// goutput.upload(input);
 	goutput.download(output);
-	gaussian_blur_exit(d_gauss_kernel);
+	gaussian_blur_exit(remove_globals,d_gauss_kernel);
 }
 
 /**
@@ -487,7 +548,22 @@ void gaussian_blur_init(const cv::Mat &input, cv::Mat &output)
 	ginput.create(input.rows, input.cols, input.type());
 	goutput.create(output.rows, output.cols, output.type());
 }
-
+void stress_test(const int &n, const bool &two_d)
+{
+	std::cout << "Kernel size: " << n << std::endl;
+	const std::string path = "../images/peppers_color.tif";
+	cv::Mat input = cv::imread(path, 1);
+	auto output = input.clone();
+	gaussian_blur_init(input, output);
+	for (int i = 0; i < 100; i++)
+	{
+		printProgress((float)i / 100);
+		gaussian_blur(input, output, n, 1.7, two_d,false);
+	}
+    ginput.release();
+    goutput.release();
+	return;
+}
 int main(int argc, char **argv)
 {
 
@@ -499,13 +575,22 @@ int main(int argc, char **argv)
 	std::string mTitle = "Display Image";
 	cv::Mat input;
 	int n = atoi(argv[1]);
+	if (strncmp(argv[2], "stress2d", 8) == 0)
+	{
+		stress_test(n, true);
+		return 0;
+	}
+	else if (strncmp(argv[2], "stress1d", 8) == 0)
+	{
+		stress_test(n, false);
+		return 0;
+	}
 	input = cv::imread(argv[2], 1);
 	if (!input.data)
 	{
 		printf("No image data \n");
 		return -1;
 	}
-	assert(input.channels() == 3);
 	auto output = input.clone();
 
 	// Call the wrapper function

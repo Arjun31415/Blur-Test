@@ -1,0 +1,144 @@
+\hypertarget{main_8cpp}{}\doxysection{main.\+cpp File Reference}
+\label{main_8cpp}\index{main.cpp@{main.cpp}}
+
+
+gaussian blurring using CPU  
+
+
+{\ttfamily \#include $<$cmath$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$opencv2/core.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/highgui.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/imgcodecs.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}{generate\+\_\+gaussian\+\_\+kernel}} (std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&kernel, const int n, const float sigma=1)
+\begin{DoxyCompactList}\small\item\em Generate a 2D gaussian kernel. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_a680d1f561f361068b937ceae95083c65}{apply\+\_\+convolution}} (const std \+::vector$<$ std\+::vector$<$ float $>$ $>$ \&kernel, const Mat \&original\+\_\+img, Mat \&new\+\_\+img, const int \&r, const int \&c)
+\begin{DoxyCompactList}\small\item\em apply a convolution kernel to a pixel \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_a2cc3b1ea968fd91ce8d6126cf08152c2}{apply\+\_\+convolution\+\_\+multi\+\_\+threaded}} (const std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&kernel, const Mat \&original\+\_\+img, Mat \&new\+\_\+img, const int \&r, const int \&c)
+\begin{DoxyCompactList}\small\item\em apply a convolution kernel to a pixel using multiple threads (OMP) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_ac4471abfaac5b5b532bee65bf50f5f52}{apply\+\_\+kernel}} (const std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&kernel, const Mat \&original\+\_\+img, Mat \&new\+\_\+img)
+\begin{DoxyCompactList}\small\item\em apply a convolution kernel to the entire image \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{main_8cpp_af3614cffdf8c1828b7af3daecf603795}{apply\+\_\+kernel\+\_\+multithreaded}} (const std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&kernel, const Mat \&original\+\_\+img, Mat \&new\+\_\+img)
+\begin{DoxyCompactList}\small\item\em apply a convolution kernel to the entire image using multiple threads (OMP) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\label{main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}} 
+int {\bfseries main} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+gaussian blurring using CPU 
+
+\begin{DoxyAuthor}{Author}
+Arjun31415 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{main_8cpp_a680d1f561f361068b937ceae95083c65}\label{main_8cpp_a680d1f561f361068b937ceae95083c65}} 
+\index{main.cpp@{main.cpp}!apply\_convolution@{apply\_convolution}}
+\index{apply\_convolution@{apply\_convolution}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{apply\_convolution()}{apply\_convolution()}}
+{\footnotesize\ttfamily void apply\+\_\+convolution (\begin{DoxyParamCaption}\item[{const std \+::vector$<$ std\+::vector$<$ float $>$ $>$ \&}]{kernel,  }\item[{const Mat \&}]{original\+\_\+img,  }\item[{Mat \&}]{new\+\_\+img,  }\item[{const int \&}]{r,  }\item[{const int \&}]{c }\end{DoxyParamCaption})}
+
+
+
+apply a convolution kernel to a pixel 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the convolution kernel \\
+\hline
+{\em original\+\_\+img} & the original image \\
+\hline
+{\em new\+\_\+img} & the output image \\
+\hline
+{\em r} & the row number of the current pixel \\
+\hline
+{\em c} & the column number of the current pixel \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{main_8cpp_a2cc3b1ea968fd91ce8d6126cf08152c2}\label{main_8cpp_a2cc3b1ea968fd91ce8d6126cf08152c2}} 
+\index{main.cpp@{main.cpp}!apply\_convolution\_multi\_threaded@{apply\_convolution\_multi\_threaded}}
+\index{apply\_convolution\_multi\_threaded@{apply\_convolution\_multi\_threaded}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{apply\_convolution\_multi\_threaded()}{apply\_convolution\_multi\_threaded()}}
+{\footnotesize\ttfamily void apply\+\_\+convolution\+\_\+multi\+\_\+threaded (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&}]{kernel,  }\item[{const Mat \&}]{original\+\_\+img,  }\item[{Mat \&}]{new\+\_\+img,  }\item[{const int \&}]{r,  }\item[{const int \&}]{c }\end{DoxyParamCaption})}
+
+
+
+apply a convolution kernel to a pixel using multiple threads (OMP) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the convolution kernel \\
+\hline
+{\em original\+\_\+img} & the original image \\
+\hline
+{\em new\+\_\+img} & the output image \\
+\hline
+{\em r} & the row number of the current pixel \\
+\hline
+{\em c} & the column number of the current pixel \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{main_8cpp_ac4471abfaac5b5b532bee65bf50f5f52}\label{main_8cpp_ac4471abfaac5b5b532bee65bf50f5f52}} 
+\index{main.cpp@{main.cpp}!apply\_kernel@{apply\_kernel}}
+\index{apply\_kernel@{apply\_kernel}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{apply\_kernel()}{apply\_kernel()}}
+{\footnotesize\ttfamily void apply\+\_\+kernel (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&}]{kernel,  }\item[{const Mat \&}]{original\+\_\+img,  }\item[{Mat \&}]{new\+\_\+img }\end{DoxyParamCaption})}
+
+
+
+apply a convolution kernel to the entire image 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the convolution kernel \\
+\hline
+{\em original\+\_\+img} & the original image \\
+\hline
+{\em new\+\_\+img} & the output image \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{main_8cpp_af3614cffdf8c1828b7af3daecf603795}\label{main_8cpp_af3614cffdf8c1828b7af3daecf603795}} 
+\index{main.cpp@{main.cpp}!apply\_kernel\_multithreaded@{apply\_kernel\_multithreaded}}
+\index{apply\_kernel\_multithreaded@{apply\_kernel\_multithreaded}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{apply\_kernel\_multithreaded()}{apply\_kernel\_multithreaded()}}
+{\footnotesize\ttfamily void apply\+\_\+kernel\+\_\+multithreaded (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&}]{kernel,  }\item[{const Mat \&}]{original\+\_\+img,  }\item[{Mat \&}]{new\+\_\+img }\end{DoxyParamCaption})}
+
+
+
+apply a convolution kernel to the entire image using multiple threads (OMP) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the convolution kernel \\
+\hline
+{\em original\+\_\+img} & the original\+\_\+img \\
+\hline
+{\em new\+\_\+img} & the output image \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}\label{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}} 
+\index{main.cpp@{main.cpp}!generate\_gaussian\_kernel@{generate\_gaussian\_kernel}}
+\index{generate\_gaussian\_kernel@{generate\_gaussian\_kernel}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{generate\_gaussian\_kernel()}{generate\_gaussian\_kernel()}}
+{\footnotesize\ttfamily void generate\+\_\+gaussian\+\_\+kernel (\begin{DoxyParamCaption}\item[{std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&}]{kernel,  }\item[{const int}]{n,  }\item[{const float}]{sigma = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Generate a 2D gaussian kernel. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the kernel to be populated \\
+\hline
+{\em n} & the size of the kernel, the {\ttfamily kernel} must be of size \$n $\ast$ n\$ \\
+\hline
+{\em sigma} & the standard deviation of the gaussian kernel \\
+\hline
+\end{DoxyParams}

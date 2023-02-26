@@ -1,0 +1,39 @@
+\@ifundefined {etoctocstyle}{\let \etoc@startlocaltoc \@gobble \let \etoc@settocdepth \@gobble \let \etoc@depthtag \@gobble \let \etoc@setlocaltop \@gobble }{}
+\contentsline {chapter}{\numberline {1}Blur-\/\discretionary {\mbox {\scriptsize $\hookleftarrow $}}{}{}Test}{1}{chapter.1}%
+\contentsline {chapter}{\numberline {2}File Index}{3}{chapter.2}%
+\contentsline {section}{\numberline {2.1}File List}{3}{section.2.1}%
+\contentsline {chapter}{\numberline {3}File Documentation}{5}{chapter.3}%
+\contentsline {section}{\numberline {3.1}blur.\discretionary {\mbox {\scriptsize $\hookleftarrow $}}{}{}cu File Reference}{5}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Detailed Description}{6}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Macro Definition Documentation}{7}{subsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.2.1}SAFE\_CALL}{7}{subsubsection.3.1.2.1}%
+\contentsline {subsection}{\numberline {3.1.3}Function Documentation}{7}{subsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.3.1}add\_value()\hspace {0.1cm}{\footnotesize \ttfamily [1/2]}}{7}{subsubsection.3.1.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.3.2}add\_value()\hspace {0.1cm}{\footnotesize \ttfamily [2/2]}}{7}{subsubsection.3.1.3.2}%
+\contentsline {subsubsection}{\numberline {3.1.3.3}call\_gaussian\_blur\_1d()}{8}{subsubsection.3.1.3.3}%
+\contentsline {subsubsection}{\numberline {3.1.3.4}call\_gaussian\_blur\_2d()}{8}{subsubsection.3.1.3.4}%
+\contentsline {subsubsection}{\numberline {3.1.3.5}gaussian\_blur()\hspace {0.1cm}{\footnotesize \ttfamily [1/2]}}{9}{subsubsection.3.1.3.5}%
+\contentsline {subsubsection}{\numberline {3.1.3.6}gaussian\_blur()\hspace {0.1cm}{\footnotesize \ttfamily [2/2]}}{9}{subsubsection.3.1.3.6}%
+\contentsline {subsubsection}{\numberline {3.1.3.7}gaussian\_blur\_exit()}{10}{subsubsection.3.1.3.7}%
+\contentsline {subsubsection}{\numberline {3.1.3.8}gaussian\_blur\_init()}{10}{subsubsection.3.1.3.8}%
+\contentsline {subsubsection}{\numberline {3.1.3.9}generate\_gaussian\_kernel\_1d()}{10}{subsubsection.3.1.3.9}%
+\contentsline {subsubsection}{\numberline {3.1.3.10}generate\_gaussian\_kernel\_2d()}{11}{subsubsection.3.1.3.10}%
+\contentsline {subsubsection}{\numberline {3.1.3.11}multiply\_value()\hspace {0.1cm}{\footnotesize \ttfamily [1/3]}}{11}{subsubsection.3.1.3.11}%
+\contentsline {subsubsection}{\numberline {3.1.3.12}multiply\_value()\hspace {0.1cm}{\footnotesize \ttfamily [2/3]}}{11}{subsubsection.3.1.3.12}%
+\contentsline {subsubsection}{\numberline {3.1.3.13}multiply\_value()\hspace {0.1cm}{\footnotesize \ttfamily [3/3]}}{12}{subsubsection.3.1.3.13}%
+\contentsline {subsubsection}{\numberline {3.1.3.14}set\_value()\hspace {0.1cm}{\footnotesize \ttfamily [1/5]}}{12}{subsubsection.3.1.3.14}%
+\contentsline {subsubsection}{\numberline {3.1.3.15}set\_value()\hspace {0.1cm}{\footnotesize \ttfamily [2/5]}}{12}{subsubsection.3.1.3.15}%
+\contentsline {subsubsection}{\numberline {3.1.3.16}set\_value()\hspace {0.1cm}{\footnotesize \ttfamily [3/5]}}{13}{subsubsection.3.1.3.16}%
+\contentsline {subsubsection}{\numberline {3.1.3.17}set\_value()\hspace {0.1cm}{\footnotesize \ttfamily [4/5]}}{13}{subsubsection.3.1.3.17}%
+\contentsline {subsubsection}{\numberline {3.1.3.18}set\_value()\hspace {0.1cm}{\footnotesize \ttfamily [5/5]}}{13}{subsubsection.3.1.3.18}%
+\contentsline {subsubsection}{\numberline {3.1.3.19}subtract\_value()\hspace {0.1cm}{\footnotesize \ttfamily [1/2]}}{14}{subsubsection.3.1.3.19}%
+\contentsline {subsubsection}{\numberline {3.1.3.20}subtract\_value()\hspace {0.1cm}{\footnotesize \ttfamily [2/2]}}{14}{subsubsection.3.1.3.20}%
+\contentsline {section}{\numberline {3.2}main.\discretionary {\mbox {\scriptsize $\hookleftarrow $}}{}{}cpp File Reference}{14}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Detailed Description}{15}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Function Documentation}{15}{subsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.2.1}apply\_convolution()}{15}{subsubsection.3.2.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2.2}apply\_convolution\_multi\_threaded()}{16}{subsubsection.3.2.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.2.3}apply\_kernel()}{16}{subsubsection.3.2.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.2.4}apply\_kernel\_multithreaded()}{17}{subsubsection.3.2.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.2.5}generate\_gaussian\_kernel()}{17}{subsubsection.3.2.2.5}%
+\contentsline {chapter}{Index}{19}{section*.5}%

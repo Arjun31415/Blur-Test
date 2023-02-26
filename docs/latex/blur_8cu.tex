@@ -1,0 +1,514 @@
+\hypertarget{blur_8cu}{}\doxysection{blur.\+cu File Reference}
+\label{blur_8cu}\index{blur.cu@{blur.cu}}
+
+
+convolution blurring in Nvidia CUDA  
+
+
+{\ttfamily \#include $<$cuda\+\_\+runtime.\+h$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$opencv2/core/core.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/core/cuda.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/core/cuda/common.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/core/matx.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/cudaimgproc.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/highgui.\+hpp$>$}\newline
+{\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{blur_8cu_a11d56285edea409bc2194736ee34496f}{SAFE\+\_\+\+CALL}}(call,  msg)~\+\_\+safe\+\_\+cuda\+\_\+call((call), (msg), \+\_\+\+\_\+\+FILE\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+)
+\begin{DoxyCompactList}\small\item\em a macro for sage calling CUDA functions \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\+\_\+\+\_\+host\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_a0019adbb68eaf5f0c5176bbdf37ffcf1}{generate\+\_\+gaussian\+\_\+kernel\+\_\+2d}} (float $\ast$kernel, const int n, const float sigma=1)
+\begin{DoxyCompactList}\small\item\em generate the gaussian kernel with given kernel size and standard deviation \end{DoxyCompactList}\item 
+\+\_\+\+\_\+host\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_a53361b59233e810079be92f55e114c97}{generate\+\_\+gaussian\+\_\+kernel\+\_\+1d}} (float $\ast$kernel, const int n, const float sigma=1)
+\begin{DoxyCompactList}\small\item\em generate a 1D gaussian kernel \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\+\_\+value}} (const int \&val, uchar \&out)
+\begin{DoxyCompactList}\small\item\em Sets the value of a uchar type. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_abdf1ee45e30080fa51e17b617a0ec3fe}{set\+\_\+value}} (const float \&val, float \&out)
+\begin{DoxyCompactList}\small\item\em set the value for a floating point type. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_a3c78576172fab41162e1c4219f953259}{set\+\_\+value}} (const float \&val, float3 \&out)
+\begin{DoxyCompactList}\small\item\em set the value for a float3 tupe. All the 3 fields will have the value {\ttfamily val} \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_ad25f4a845490ca37c3d351cd02bba638}{set\+\_\+value}} (const float3 \&val, uchar3 \&out)
+\begin{DoxyCompactList}\small\item\em set the value for a unsigned char3 type with a flot3 type \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_a760cb28843204b2d51b884f2cb0d5010}{set\+\_\+value}} (const int \&val, uchar3 \&out)
+\begin{DoxyCompactList}\small\item\em Sets the value of a uchar3 type. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ uchar3 \mbox{\hyperlink{blur_8cu_a92038f3008ef3bddea7e6a5eb27a0905}{subtract\+\_\+value}} (uchar3 in1, uchar3 in2)
+\begin{DoxyCompactList}\small\item\em Subtraction for uchar3 types. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float3 \mbox{\hyperlink{blur_8cu_a23251bce37a6375316ee0f252fdadc20}{add\+\_\+value}} (float3 in1, float3 in2)
+\begin{DoxyCompactList}\small\item\em add two values and return it \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float \mbox{\hyperlink{blur_8cu_abeac2ba94adfcea235a329248001bb0e}{add\+\_\+value}} (float in1, float in2)
+\begin{DoxyCompactList}\small\item\em add two floating point values \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ uchar \mbox{\hyperlink{blur_8cu_a5c51999a91d78aa4a6e73495895fec78}{subtract\+\_\+value}} (uchar in1, uchar in2)
+\begin{DoxyCompactList}\small\item\em Subtraction for uchar types. \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float3 \mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{multiply\+\_\+value}} (const float \&x, const uchar3 \&y)
+\begin{DoxyCompactList}\small\item\em multiplication for float and uchar3 types. Multiply each filed in uchar3 with the float value and return a flolat3 \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float3 \mbox{\hyperlink{blur_8cu_ac433435c14cd21ade5e60037f6afb1bd}{multiply\+\_\+value}} (const float \&x, const float3 \&y)
+\begin{DoxyCompactList}\small\item\em multiplication for float and float3 types. Multiply each filed in uchar3 with the float value and return a float3 \end{DoxyCompactList}\item 
+\+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float \mbox{\hyperlink{blur_8cu_a56403ae4f620cc6e96118614b069bb25}{multiply\+\_\+value}} (const float \&x, const uchar \&y)
+\begin{DoxyCompactList}\small\item\em multiplication for float and uchar4 types \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T\+\_\+in , typename T\+\_\+out , typename F\+\_\+cal $>$ }\\\+\_\+\+\_\+global\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}{gaussian\+\_\+blur}} (const float $\ast$kernel, int n, const cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+in $>$ input, cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+out $>$ output)
+\begin{DoxyCompactList}\small\item\em applys the gaussian blur convolution to the input image \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{blur_8cu_a8687a4eee31a74468570db30a29a31c9}\label{blur_8cu_a8687a4eee31a74468570db30a29a31c9}} 
+{\footnotesize template$<$typename T\+\_\+in , typename T\+\_\+out , typename F\+\_\+cal $>$ }\\\+\_\+\+\_\+global\+\_\+\+\_\+ void {\bfseries gaussian\+\_\+blur\+\_\+x} (float $\ast$kernel, int kernel\+\_\+size, const cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+in $>$ input, cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+out $>$ output)
+\item 
+\mbox{\Hypertarget{blur_8cu_a411df053a2d5e063133ed6c21a0cbd0c}\label{blur_8cu_a411df053a2d5e063133ed6c21a0cbd0c}} 
+{\footnotesize template$<$typename T\+\_\+in , typename T\+\_\+out , typename F\+\_\+cal $>$ }\\\+\_\+\+\_\+global\+\_\+\+\_\+ void {\bfseries gaussian\+\_\+blur\+\_\+y} (float $\ast$kernel, int kernel\+\_\+size, const cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+in $>$ input, cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+out $>$ output)
+\item 
+{\footnotesize template$<$class... Ts$>$ }\\void \mbox{\hyperlink{blur_8cu_a76d70a60a6f796eb879606af2c1f4fb7}{gaussian\+\_\+blur\+\_\+exit}} (Ts \&\&...inputs)
+\begin{DoxyCompactList}\small\item\em free all the GPU resources \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{blur_8cu_a9dcf28fe26fd4268b2dcfdf08719d7c0}{call\+\_\+gaussian\+\_\+blur\+\_\+2d}} (float $\ast$d\+\_\+kernel, const int \&n, const cv\+::cuda\+::\+Gpu\+Mat \&input, cv\+::cuda\+::\+Gpu\+Mat \&output)
+\begin{DoxyCompactList}\small\item\em calls the gaussian\+\_\+blur function appropriately based on the type of image \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{blur_8cu_ab3a24e35eb1059ab0a7aa7376606fcee}{call\+\_\+gaussian\+\_\+blur\+\_\+1d}} (float $\ast$d\+\_\+kernel, const int \&n, const cv\+::cuda\+::\+Gpu\+Mat \&input, cv\+::cuda\+::\+Gpu\+Mat \&output)
+\begin{DoxyCompactList}\small\item\em calls the separable gaussian\+\_\+blur function appropriately based on the type of image \end{DoxyCompactList}\item 
+\+\_\+\+\_\+host\+\_\+\+\_\+ void \mbox{\hyperlink{blur_8cu_a55f119e995b3421b7616c68bb14e6429}{gaussian\+\_\+blur}} (const cv\+::\+Mat \&input, cv\+::\+Mat \&output, const int n=3, const float sigma=1.\+0, bool two\+\_\+d=true)
+\begin{DoxyCompactList}\small\item\em the gaussian blur function which runs on the HOST CPU. It calls the {\ttfamily call\+\_\+gaussian\+\_\+blur} function after initialization of the appropriate values and kernel. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{blur_8cu_a74fff5eb6cbf35b2126ed8286e65214c}{gaussian\+\_\+blur\+\_\+init}} (const cv\+::\+Mat \&input, cv\+::\+Mat \&output)
+\begin{DoxyCompactList}\small\item\em initialization for gaussian blurring operation \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{blur_8cu_a3c04138a5bfe5d72780bb7e82a18e627}\label{blur_8cu_a3c04138a5bfe5d72780bb7e82a18e627}} 
+int {\bfseries main} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{blur_8cu_a623c74727bd679c750319f1a16fa7eda}\label{blur_8cu_a623c74727bd679c750319f1a16fa7eda}} 
+cv\+::cuda\+::\+Gpu\+Mat {\bfseries ginput}
+\item 
+\mbox{\Hypertarget{blur_8cu_a6bcfbb5b93ff5c1eec6219b43b9bf80d}\label{blur_8cu_a6bcfbb5b93ff5c1eec6219b43b9bf80d}} 
+cv\+::cuda\+::\+Gpu\+Mat {\bfseries goutput}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+convolution blurring in Nvidia CUDA 
+
+\begin{DoxyAuthor}{Author}
+Arjun31415 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{blur_8cu_a11d56285edea409bc2194736ee34496f}\label{blur_8cu_a11d56285edea409bc2194736ee34496f}} 
+\index{blur.cu@{blur.cu}!SAFE\_CALL@{SAFE\_CALL}}
+\index{SAFE\_CALL@{SAFE\_CALL}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{SAFE\_CALL}{SAFE\_CALL}}
+{\footnotesize\ttfamily \#define SAFE\+\_\+\+CALL(\begin{DoxyParamCaption}\item[{}]{call,  }\item[{}]{msg }\end{DoxyParamCaption})~\+\_\+safe\+\_\+cuda\+\_\+call((call), (msg), \+\_\+\+\_\+\+FILE\+\_\+\+\_\+, \+\_\+\+\_\+\+LINE\+\_\+\+\_\+)}
+
+
+
+a macro for sage calling CUDA functions 
+
+
+\begin{DoxyParams}{Parameters}
+{\em call} & the CUDA function call \\
+\hline
+{\em msg} & user specified message \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{blur_8cu_abeac2ba94adfcea235a329248001bb0e}\label{blur_8cu_abeac2ba94adfcea235a329248001bb0e}} 
+\index{blur.cu@{blur.cu}!add\_value@{add\_value}}
+\index{add\_value@{add\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{add\_value()}{add\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float add\+\_\+value (\begin{DoxyParamCaption}\item[{float}]{in1,  }\item[{float}]{in2 }\end{DoxyParamCaption})}
+
+
+
+add two floating point values 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in1} & value 1 \\
+\hline
+{\em in2} & value 2 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the sum 
+\end{DoxyReturn}
+\mbox{\Hypertarget{blur_8cu_a23251bce37a6375316ee0f252fdadc20}\label{blur_8cu_a23251bce37a6375316ee0f252fdadc20}} 
+\index{blur.cu@{blur.cu}!add\_value@{add\_value}}
+\index{add\_value@{add\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{add\_value()}{add\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float3 add\+\_\+value (\begin{DoxyParamCaption}\item[{float3}]{in1,  }\item[{float3}]{in2 }\end{DoxyParamCaption})}
+
+
+
+add two values and return it 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in1} & input 1 \\
+\hline
+{\em in2} & intput 2 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+returns the added value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{blur_8cu_ab3a24e35eb1059ab0a7aa7376606fcee}\label{blur_8cu_ab3a24e35eb1059ab0a7aa7376606fcee}} 
+\index{blur.cu@{blur.cu}!call\_gaussian\_blur\_1d@{call\_gaussian\_blur\_1d}}
+\index{call\_gaussian\_blur\_1d@{call\_gaussian\_blur\_1d}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{call\_gaussian\_blur\_1d()}{call\_gaussian\_blur\_1d()}}
+{\footnotesize\ttfamily void call\+\_\+gaussian\+\_\+blur\+\_\+1d (\begin{DoxyParamCaption}\item[{float $\ast$}]{d\+\_\+kernel,  }\item[{const int \&}]{n,  }\item[{const cv\+::cuda\+::\+Gpu\+Mat \&}]{input,  }\item[{cv\+::cuda\+::\+Gpu\+Mat \&}]{output }\end{DoxyParamCaption})}
+
+
+
+calls the separable gaussian\+\_\+blur function appropriately based on the type of image 
+
+
+\begin{DoxyParams}{Parameters}
+{\em d\+\_\+kernel} & the kernel, stored on GPU device memory \\
+\hline
+{\em n} & the size of the kernel \\
+\hline
+{\em input} & the input image stored on the GPU \\
+\hline
+{\em output} & the output image stored on the GPU \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a9dcf28fe26fd4268b2dcfdf08719d7c0}\label{blur_8cu_a9dcf28fe26fd4268b2dcfdf08719d7c0}} 
+\index{blur.cu@{blur.cu}!call\_gaussian\_blur\_2d@{call\_gaussian\_blur\_2d}}
+\index{call\_gaussian\_blur\_2d@{call\_gaussian\_blur\_2d}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{call\_gaussian\_blur\_2d()}{call\_gaussian\_blur\_2d()}}
+{\footnotesize\ttfamily void call\+\_\+gaussian\+\_\+blur\+\_\+2d (\begin{DoxyParamCaption}\item[{float $\ast$}]{d\+\_\+kernel,  }\item[{const int \&}]{n,  }\item[{const cv\+::cuda\+::\+Gpu\+Mat \&}]{input,  }\item[{cv\+::cuda\+::\+Gpu\+Mat \&}]{output }\end{DoxyParamCaption})}
+
+
+
+calls the gaussian\+\_\+blur function appropriately based on the type of image 
+
+
+\begin{DoxyParams}{Parameters}
+{\em d\+\_\+kernel} & the kernel, stored on GPU device memory \\
+\hline
+{\em n} & the size of the kernel \\
+\hline
+{\em input} & the input image stored on the GPU \\
+\hline
+{\em output} & the output image stored on the GPU \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a55f119e995b3421b7616c68bb14e6429}\label{blur_8cu_a55f119e995b3421b7616c68bb14e6429}} 
+\index{blur.cu@{blur.cu}!gaussian\_blur@{gaussian\_blur}}
+\index{gaussian\_blur@{gaussian\_blur}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{gaussian\_blur()}{gaussian\_blur()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+host\+\_\+\+\_\+ void gaussian\+\_\+blur (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{input,  }\item[{cv\+::\+Mat \&}]{output,  }\item[{const int}]{n = {\ttfamily 3},  }\item[{const float}]{sigma = {\ttfamily 1.0},  }\item[{bool}]{two\+\_\+d = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+the gaussian blur function which runs on the HOST CPU. It calls the {\ttfamily call\+\_\+gaussian\+\_\+blur} function after initialization of the appropriate values and kernel. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & the input image stored on the CPU memory \\
+\hline
+{\em output} & the output image stored on the CPU memory \\
+\hline
+{\em n} & the size of the Gaussian kernel, defaults to 3 \\
+\hline
+{\em sigma} & the standard deviation of the Gaussian kernel, defaults to 1. \\
+\hline
+{\em two\+\_\+d} & whether to use the 2D gaussian blur kernel or two separable 1D gaussian blur kernels, defaults to true \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}\label{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}} 
+\index{blur.cu@{blur.cu}!gaussian\_blur@{gaussian\_blur}}
+\index{gaussian\_blur@{gaussian\_blur}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{gaussian\_blur()}{gaussian\_blur()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T\+\_\+in , typename T\+\_\+out , typename F\+\_\+cal $>$ \\
+\+\_\+\+\_\+global\+\_\+\+\_\+ void gaussian\+\_\+blur (\begin{DoxyParamCaption}\item[{const float $\ast$}]{kernel,  }\item[{int}]{n,  }\item[{const cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+in $>$}]{input,  }\item[{cv\+::cuda\+::\+Ptr\+Step\+Sz$<$ T\+\_\+out $>$}]{output }\end{DoxyParamCaption})}
+
+
+
+applys the gaussian blur convolution to the input image 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+in} & the type of input image, i.\+e uchar for black and white, uchar3 for rgb, float3 etc \\
+\hline
+{\em t\+\_\+out} & the type of output image \\
+\hline
+{\em f\+\_\+cal} & the type for calculating intermediate sums and products \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the kernel to apply the convolution \\
+\hline
+{\em n} & the dimension of the kernel (n x n) \\
+\hline
+{\em input} & the input image \\
+\hline
+{\em output} & the output image \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a76d70a60a6f796eb879606af2c1f4fb7}\label{blur_8cu_a76d70a60a6f796eb879606af2c1f4fb7}} 
+\index{blur.cu@{blur.cu}!gaussian\_blur\_exit@{gaussian\_blur\_exit}}
+\index{gaussian\_blur\_exit@{gaussian\_blur\_exit}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{gaussian\_blur\_exit()}{gaussian\_blur\_exit()}}
+{\footnotesize\ttfamily template$<$class... Ts$>$ \\
+void gaussian\+\_\+blur\+\_\+exit (\begin{DoxyParamCaption}\item[{Ts \&\&...}]{inputs }\end{DoxyParamCaption})}
+
+
+
+free all the GPU resources 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Ts} & \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em inputs} & varidaic list of resources \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a74fff5eb6cbf35b2126ed8286e65214c}\label{blur_8cu_a74fff5eb6cbf35b2126ed8286e65214c}} 
+\index{blur.cu@{blur.cu}!gaussian\_blur\_init@{gaussian\_blur\_init}}
+\index{gaussian\_blur\_init@{gaussian\_blur\_init}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{gaussian\_blur\_init()}{gaussian\_blur\_init()}}
+{\footnotesize\ttfamily void gaussian\+\_\+blur\+\_\+init (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{input,  }\item[{cv\+::\+Mat \&}]{output }\end{DoxyParamCaption})}
+
+
+
+initialization for gaussian blurring operation 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & input image stored on the CPU \\
+\hline
+{\em output} & output image stored on the CPU \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a53361b59233e810079be92f55e114c97}\label{blur_8cu_a53361b59233e810079be92f55e114c97}} 
+\index{blur.cu@{blur.cu}!generate\_gaussian\_kernel\_1d@{generate\_gaussian\_kernel\_1d}}
+\index{generate\_gaussian\_kernel\_1d@{generate\_gaussian\_kernel\_1d}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{generate\_gaussian\_kernel\_1d()}{generate\_gaussian\_kernel\_1d()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+host\+\_\+\+\_\+ void generate\+\_\+gaussian\+\_\+kernel\+\_\+1d (\begin{DoxyParamCaption}\item[{float $\ast$}]{kernel,  }\item[{const int}]{n,  }\item[{const float}]{sigma = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+generate a 1D gaussian kernel 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the array in which the weights are stored \\
+\hline
+{\em n} & the size of the kernel. a 1D kernel of length n is needed \\
+\hline
+{\em sigma} & the standard deviation of the kernel \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{blur_8cu_a0019adbb68eaf5f0c5176bbdf37ffcf1}\label{blur_8cu_a0019adbb68eaf5f0c5176bbdf37ffcf1}} 
+\index{blur.cu@{blur.cu}!generate\_gaussian\_kernel\_2d@{generate\_gaussian\_kernel\_2d}}
+\index{generate\_gaussian\_kernel\_2d@{generate\_gaussian\_kernel\_2d}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{generate\_gaussian\_kernel\_2d()}{generate\_gaussian\_kernel\_2d()}}
+{\footnotesize\ttfamily \+\_\+\+\_\+host\+\_\+\+\_\+ void generate\+\_\+gaussian\+\_\+kernel\+\_\+2d (\begin{DoxyParamCaption}\item[{float $\ast$}]{kernel,  }\item[{const int}]{n,  }\item[{const float}]{sigma = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+generate the gaussian kernel with given kernel size and standard deviation 
+
+
+\begin{DoxyParams}{Parameters}
+{\em kernel} & the array in which the weights are stored \\
+\hline
+{\em n} & the size of the kernel, t.\+e. n x n kernel is needed \\
+\hline
+{\em sigma} & the standard deviation \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_ac433435c14cd21ade5e60037f6afb1bd}\label{blur_8cu_ac433435c14cd21ade5e60037f6afb1bd}} 
+\index{blur.cu@{blur.cu}!multiply\_value@{multiply\_value}}
+\index{multiply\_value@{multiply\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{multiply\_value()}{multiply\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float3 multiply\+\_\+value (\begin{DoxyParamCaption}\item[{const float \&}]{x,  }\item[{const float3 \&}]{y }\end{DoxyParamCaption})}
+
+
+
+multiplication for float and float3 types. Multiply each filed in uchar3 with the float value and return a float3 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input 1 \\
+\hline
+{\em y} & Input 2 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value after multiplication 
+\end{DoxyReturn}
+\mbox{\Hypertarget{blur_8cu_a56403ae4f620cc6e96118614b069bb25}\label{blur_8cu_a56403ae4f620cc6e96118614b069bb25}} 
+\index{blur.cu@{blur.cu}!multiply\_value@{multiply\_value}}
+\index{multiply\_value@{multiply\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{multiply\_value()}{multiply\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float multiply\+\_\+value (\begin{DoxyParamCaption}\item[{const float \&}]{x,  }\item[{const uchar \&}]{y }\end{DoxyParamCaption})}
+
+
+
+multiplication for float and uchar4 types 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input 1 \\
+\hline
+{\em y} & Input 2 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+x$\ast$y 
+\end{DoxyReturn}
+\mbox{\Hypertarget{blur_8cu_ac21e923466fc80283f1f47a0199b9291}\label{blur_8cu_ac21e923466fc80283f1f47a0199b9291}} 
+\index{blur.cu@{blur.cu}!multiply\_value@{multiply\_value}}
+\index{multiply\_value@{multiply\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{multiply\_value()}{multiply\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ float3 multiply\+\_\+value (\begin{DoxyParamCaption}\item[{const float \&}]{x,  }\item[{const uchar3 \&}]{y }\end{DoxyParamCaption})}
+
+
+
+multiplication for float and uchar3 types. Multiply each filed in uchar3 with the float value and return a flolat3 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & Input 1 \\
+\hline
+{\em y} & Input 2 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+value after multiplication 
+\end{DoxyReturn}
+\mbox{\Hypertarget{blur_8cu_abdf1ee45e30080fa51e17b617a0ec3fe}\label{blur_8cu_abdf1ee45e30080fa51e17b617a0ec3fe}} 
+\index{blur.cu@{blur.cu}!set\_value@{set\_value}}
+\index{set\_value@{set\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{set\_value()}{set\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void set\+\_\+value (\begin{DoxyParamCaption}\item[{const float \&}]{val,  }\item[{float \&}]{out }\end{DoxyParamCaption})}
+
+
+
+set the value for a floating point type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & the value \\
+\hline
+{\em out} & the output \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a3c78576172fab41162e1c4219f953259}\label{blur_8cu_a3c78576172fab41162e1c4219f953259}} 
+\index{blur.cu@{blur.cu}!set\_value@{set\_value}}
+\index{set\_value@{set\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{set\_value()}{set\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void set\+\_\+value (\begin{DoxyParamCaption}\item[{const float \&}]{val,  }\item[{float3 \&}]{out }\end{DoxyParamCaption})}
+
+
+
+set the value for a float3 tupe. All the 3 fields will have the value {\ttfamily val} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & the value \\
+\hline
+{\em out} & the output \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_ad25f4a845490ca37c3d351cd02bba638}\label{blur_8cu_ad25f4a845490ca37c3d351cd02bba638}} 
+\index{blur.cu@{blur.cu}!set\_value@{set\_value}}
+\index{set\_value@{set\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{set\_value()}{set\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void set\+\_\+value (\begin{DoxyParamCaption}\item[{const float3 \&}]{val,  }\item[{uchar3 \&}]{out }\end{DoxyParamCaption})}
+
+
+
+set the value for a unsigned char3 type with a flot3 type 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & the value to set \\
+\hline
+{\em out} & the ouput \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}\label{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}} 
+\index{blur.cu@{blur.cu}!set\_value@{set\_value}}
+\index{set\_value@{set\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{set\_value()}{set\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void set\+\_\+value (\begin{DoxyParamCaption}\item[{const int \&}]{val,  }\item[{uchar \&}]{out }\end{DoxyParamCaption})}
+
+
+
+Sets the value of a uchar type. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & The value \\
+\hline
+{\em out} & The output \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a760cb28843204b2d51b884f2cb0d5010}\label{blur_8cu_a760cb28843204b2d51b884f2cb0d5010}} 
+\index{blur.cu@{blur.cu}!set\_value@{set\_value}}
+\index{set\_value@{set\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{set\_value()}{set\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ void set\+\_\+value (\begin{DoxyParamCaption}\item[{const int \&}]{val,  }\item[{uchar3 \&}]{out }\end{DoxyParamCaption})}
+
+
+
+Sets the value of a uchar3 type. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em val} & The value \\
+\hline
+ & {\em out} & The output \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{blur_8cu_a5c51999a91d78aa4a6e73495895fec78}\label{blur_8cu_a5c51999a91d78aa4a6e73495895fec78}} 
+\index{blur.cu@{blur.cu}!subtract\_value@{subtract\_value}}
+\index{subtract\_value@{subtract\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{subtract\_value()}{subtract\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ uchar subtract\+\_\+value (\begin{DoxyParamCaption}\item[{uchar}]{in1,  }\item[{uchar}]{in2 }\end{DoxyParamCaption})}
+
+
+
+Subtraction for uchar types. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em in1} & Input 1 \\
+\hline
+\mbox{\texttt{ in}}  & {\em in2} & Input 2\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Output 
+\end{DoxyReturn}
+\mbox{\Hypertarget{blur_8cu_a92038f3008ef3bddea7e6a5eb27a0905}\label{blur_8cu_a92038f3008ef3bddea7e6a5eb27a0905}} 
+\index{blur.cu@{blur.cu}!subtract\_value@{subtract\_value}}
+\index{subtract\_value@{subtract\_value}!blur.cu@{blur.cu}}
+\doxysubsubsection{\texorpdfstring{subtract\_value()}{subtract\_value()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \+\_\+\+\_\+device\+\_\+\+\_\+ \+\_\+\+\_\+forceinline\+\_\+\+\_\+ uchar3 subtract\+\_\+value (\begin{DoxyParamCaption}\item[{uchar3}]{in1,  }\item[{uchar3}]{in2 }\end{DoxyParamCaption})}
+
+
+
+Subtraction for uchar3 types. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em in1} & Input 1 \\
+\hline
+\mbox{\texttt{ in}}  & {\em in2} & Input 2\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Output 
+\end{DoxyReturn}
