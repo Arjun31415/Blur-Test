@@ -3,3 +3,4 @@ build
 output/
 images/
 compile_commands.json
+metrics/.venv/
