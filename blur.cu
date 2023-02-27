@@ -19,6 +19,7 @@
 #include <stdio.h>
 cv::cuda::GpuMat ginput, goutput;
 
+// Progress Bar STRing
 #define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
 #define PBWIDTH 60
 void printProgress(double percentage)
@@ -281,7 +282,7 @@ __device__ __forceinline__ float multiply_value(const float &x, const uchar &y)
  * @tparam t_out the type of output image
  * @tparam f_cal the type for calculating intermediate sums and products
  * @param kernel the kernel to apply the convolution
- * @param n the dimension of the kernel (n x n)
+ * @param n the dimension of the kernel \f$(n \times n)\f$
  * @param input the input image
  * @param output the output image
  */
@@ -319,7 +320,7 @@ __global__ void gaussian_blur(const float *kernel, int n,
 	set_value(sum, result);
 	output(y, x) = result;
 }
-/*
+/**
  * @brief applys the gaussian blur convolution to the input image along the
 x-axis
  * @tparam t_in the type of input image, i.e uchar for black and white, uchar3
@@ -327,7 +328,7 @@ x-axis
  * @tparam t_out the type of output image
  * @tparam f_cal the type for calculating intermediate sums and products
  * @param kernel the kernel to apply the convolution
- * @param n the dimension of the kernel (n x n)
+ * @param kernel_size the dimension of the kernel
  * @param input the input image
  * @param output the output image
 */
@@ -350,7 +351,6 @@ __global__ void gaussian_blur_x(float *kernel, int kernel_size,
 	for (int i = -radius; i <= radius; i++)
 	{
 		int idx = y * width + (x + i);
-		/* printf("%d\n", idx); */
 		if (idx >= 0 && idx < width * height)
 		{
 			const float weight = kernel[i + radius];
@@ -360,7 +360,7 @@ __global__ void gaussian_blur_x(float *kernel, int kernel_size,
 	set_value(pixel, output(y, x));
 }
 
-/*
+/**
  * @brief applys the gaussian blur convolution to the input image along the
 y-axis
  * @tparam t_in the type of input image, i.e uchar for black and white, uchar3
@@ -368,7 +368,7 @@ y-axis
  * @tparam t_out the type of output image
  * @tparam f_cal the type for calculating intermediate sums and products
  * @param kernel the kernel to apply the convolution
- * @param n the dimension of the kernel (n x n)
+ * @param kernel_size the dimension of the kernel
  * @param input the input image
  * @param output the output image
 */
@@ -405,9 +405,12 @@ __global__ void gaussian_blur_y(float *kernel, int kernel_size,
  *
  * @tparam Ts
  * @param inputs varidaic list of resources
+ * @param remove_globals if true, removes the global variables, otherwise not,
+ *  if Not then user has to handle the removal of the global variables and
+ * freeing the GPU memory
  */
-template <typename ...Ts>
-void gaussian_blur_exit( bool remove_globals, Ts &&...inputs)
+template <typename... Ts>
+void gaussian_blur_exit(bool remove_globals, Ts &&...inputs)
 {
 	if (remove_globals)
 	{
@@ -415,7 +418,6 @@ void gaussian_blur_exit( bool remove_globals, Ts &&...inputs)
 		goutput.release();
 	}
 	([&] { SAFE_CALL(cudaFree(inputs), "Unable to free"); }(), ...);
-
 }
 
 /**
@@ -515,9 +517,7 @@ __host__ void gaussian_blur(const cv::Mat &input, cv::Mat &output,
 		SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
 							 sizeof(float) * n * n, cudaMemcpyHostToDevice),
 				  "Unable to copy kernel");
-		/* cudaProfilerStart(); */
 		call_gaussian_blur_2d(d_gauss_kernel, n, ginput, goutput);
-		/* cudaProfilerStop(); */
 	}
 	else
 	{
@@ -528,13 +528,10 @@ __host__ void gaussian_blur(const cv::Mat &input, cv::Mat &output,
 		SAFE_CALL(cudaMemcpy(d_gauss_kernel, gauss_kernel_host.data(),
 							 sizeof(float) * n, cudaMemcpyHostToDevice),
 				  "Unable to copy kernel");
-		/* cudaProfilerStart(); */
 		call_gaussian_blur_1d(d_gauss_kernel, n, ginput, goutput);
-		/* cudaProfilerStop(); */
 	}
-	// goutput.upload(input);
 	goutput.download(output);
-	gaussian_blur_exit(remove_globals,d_gauss_kernel);
+	gaussian_blur_exit(remove_globals, d_gauss_kernel);
 }
 
 /**
@@ -558,10 +555,11 @@ void stress_test(const int &n, const bool &two_d)
 	for (int i = 0; i < 100; i++)
 	{
 		printProgress((float)i / 100);
-		gaussian_blur(input, output, n, 1.7, two_d,false);
+		gaussian_blur(input, output, n, 1.7, two_d, false);
 	}
-    ginput.release();
-    goutput.release();
+	std::cout << std::endl;
+	ginput.release();
+	goutput.release();
 	return;
 }
 int main(int argc, char **argv)
@@ -603,9 +601,7 @@ int main(int argc, char **argv)
 	// Wait for key press
 	cv::waitKey();
 	namedWindow(mTitle, cv::WINDOW_AUTOSIZE);
-	/* namedWindow("gauss", cv::WINDOW_AUTOSIZE); */
 	imshow(mTitle, input);
-	/* imshow("gaussian", output); */
 	if (argc >= 4) imwrite(argv[3], output);
 	do
 	{

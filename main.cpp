@@ -205,8 +205,6 @@ void stress_test(const int &n, const bool &multi = true)
 			run_times.push_back(duration_ms.count());
 		}
 	}
-	/* for (auto i = 0; i < num_runs; i++)
-		std::cout << run_times[i] << "\t"; */
 	sort(run_times.begin(), run_times.end());
 	double avg = std::accumulate(run_times.begin(), run_times.end(), 0.0) /
 				 run_times.size();
@@ -232,11 +230,6 @@ void stress_test(const int &n, const bool &multi = true)
 		 << avg << "," << median << std::endl;
 
 	file.close();
-
-	/* setenv("MAX_RUN_TIME", std::to_string(run_times.back()).c_str(), 1);
-	setenv("MIN_RUN_TIME", std::to_string(run_times.front()).c_str(), 1);
-	setenv("AVG_RUN_TIME", std::to_string(avg).c_str(), 1);
-	setenv("MEDIAN_RUN_TIME", std::to_string(median).c_str(), 1); */
 }
 int main(int argc, char **argv)
 {
@@ -270,7 +263,6 @@ int main(int argc, char **argv)
 	}
 	namedWindow(mTitle, WINDOW_AUTOSIZE);
 	auto new_img = image.clone();
-	// namedWindow("gauss", WINDOW_AUTOSIZE);
 	apply_kernel_multithreaded(gauss_kernel, image, new_img);
 	imshow(mTitle, image);
 	imshow("gaussian", new_img);
