@@ -71,6 +71,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">main.cpp File Reference</div></div>
 </div><!--header-->
@@ -79,15 +80,30 @@ $(function() {
 <p>gaussian blurring using CPU  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;numeric&gt;</code><br />
+<code>#include &lt;omp.h&gt;</code><br />
 <code>#include &lt;opencv2/core.hpp&gt;</code><br />
 <code>#include &lt;opencv2/highgui.hpp&gt;</code><br />
 <code>#include &lt;opencv2/imgcodecs.hpp&gt;</code><br />
 <code>#include &lt;opencv2/opencv.hpp&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-</div><table class="memberdecls">
+</div>
+<p><a href="main_8cpp_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a93f03159397f25c687840129b18c972d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a93f03159397f25c687840129b18c972d">PBSTR</a>&#160;&#160;&#160;&quot;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||&quot;</td></tr>
+<tr class="separator:a93f03159397f25c687840129b18c972d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69793e71975c25754a8236df29896e15"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a69793e71975c25754a8236df29896e15">PBWIDTH</a>&#160;&#160;&#160;60</td></tr>
+<tr class="separator:a69793e71975c25754a8236df29896e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a9d3b483a858efb84ce776bed255b6dd6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a9d3b483a858efb84ce776bed255b6dd6">printProgress</a> (double percentage)</td></tr>
+<tr class="separator:a9d3b483a858efb84ce776bed255b6dd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee6c26bcb89a471d6240f9b3186defde"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#aee6c26bcb89a471d6240f9b3186defde">generate_gaussian_kernel</a> (std::vector&lt; std::vector&lt; float &gt; &gt; &amp;kernel, const int n, const float sigma=1)</td></tr>
 <tr class="memdesc:aee6c26bcb89a471d6240f9b3186defde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a 2D gaussian kernel.  <br /></td></tr>
 <tr class="separator:aee6c26bcb89a471d6240f9b3186defde"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,14 +119,50 @@ Functions</h2></td></tr>
 <tr class="memitem:af3614cffdf8c1828b7af3daecf603795"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#af3614cffdf8c1828b7af3daecf603795">apply_kernel_multithreaded</a> (const std::vector&lt; std::vector&lt; float &gt; &gt; &amp;kernel, const Mat &amp;original_img, Mat &amp;new_img)</td></tr>
 <tr class="memdesc:af3614cffdf8c1828b7af3daecf603795"><td class="mdescLeft">&#160;</td><td class="mdescRight">apply a convolution kernel to the entire image using multiple threads (OMP)  <br /></td></tr>
 <tr class="separator:af3614cffdf8c1828b7af3daecf603795"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top"><a id="a3c04138a5bfe5d72780bb7e82a18e627" name="a3c04138a5bfe5d72780bb7e82a18e627"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, char **argv)</td></tr>
+<tr class="memitem:a8316295b173ea4b1ac8c3fe1f4373037"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a8316295b173ea4b1ac8c3fe1f4373037">stress_test</a> (const int &amp;n, const bool &amp;multi=true)</td></tr>
+<tr class="separator:a8316295b173ea4b1ac8c3fe1f4373037"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 <tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>gaussian blurring using CPU </p>
 <dl class="section author"><dt>Author</dt><dd>Arjun31415 </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
+
+<p class="definition">Definition in file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a93f03159397f25c687840129b18c972d" name="a93f03159397f25c687840129b18c972d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93f03159397f25c687840129b18c972d">&#9670;&#160;</a></span>PBSTR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define PBSTR&#160;&#160;&#160;&quot;||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00020">20</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a69793e71975c25754a8236df29896e15" name="a69793e71975c25754a8236df29896e15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69793e71975c25754a8236df29896e15">&#9670;&#160;</a></span>PBWIDTH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define PBWIDTH&#160;&#160;&#160;60</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00021">21</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="a680d1f561f361068b937ceae95083c65" name="a680d1f561f361068b937ceae95083c65"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a680d1f561f361068b937ceae95083c65">&#9670;&#160;</a></span>apply_convolution()</h2>
 
@@ -166,6 +218,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00076">76</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
 </div>
 </div>
@@ -225,6 +279,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00106">106</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
 </div>
 </div>
 <a id="ac4471abfaac5b5b532bee65bf50f5f52" name="ac4471abfaac5b5b532bee65bf50f5f52"></a>
@@ -268,6 +324,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00136">136</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
 </div>
 </div>
@@ -313,6 +371,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00155">155</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
 </div>
 </div>
 <a id="aee6c26bcb89a471d6240f9b3186defde" name="aee6c26bcb89a471d6240f9b3186defde"></a>
@@ -356,6 +416,88 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>main</b> (int argc, ch
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00039">39</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3c04138a5bfe5d72780bb7e82a18e627" name="a3c04138a5bfe5d72780bb7e82a18e627"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c04138a5bfe5d72780bb7e82a18e627">&#9670;&#160;</a></span>main()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int main </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>argc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>argv</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00241">241</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9d3b483a858efb84ce776bed255b6dd6" name="a9d3b483a858efb84ce776bed255b6dd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d3b483a858efb84ce776bed255b6dd6">&#9670;&#160;</a></span>printProgress()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void printProgress </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>percentage</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00023">23</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a8316295b173ea4b1ac8c3fe1f4373037" name="a8316295b173ea4b1ac8c3fe1f4373037"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8316295b173ea4b1ac8c3fe1f4373037">&#9670;&#160;</a></span>stress_test()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stress_test </td>
+          <td>(</td>
+          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool &amp;&#160;</td>
+          <td class="paramname"><em>multi</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="main_8cpp_source.html#l00170">170</a> of file <a class="el" href="main_8cpp_source.html">main.cpp</a>.</p>
 
 </div>
 </div>

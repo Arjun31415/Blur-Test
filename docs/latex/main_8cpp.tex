@@ -6,14 +6,27 @@ gaussian blurring using CPU
 
 
 {\ttfamily \#include $<$cmath$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
 {\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$numeric$>$}\newline
+{\ttfamily \#include $<$omp.\+h$>$}\newline
 {\ttfamily \#include $<$opencv2/core.\+hpp$>$}\newline
 {\ttfamily \#include $<$opencv2/highgui.\+hpp$>$}\newline
 {\ttfamily \#include $<$opencv2/imgcodecs.\+hpp$>$}\newline
 {\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
 {\ttfamily \#include $<$vector$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{main_8cpp_a93f03159397f25c687840129b18c972d}{PBSTR}}~\char`\"{}$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$\char`\"{}
+\item 
+\#define \mbox{\hyperlink{main_8cpp_a69793e71975c25754a8236df29896e15}{PBWIDTH}}~60
+\end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{main_8cpp_a9d3b483a858efb84ce776bed255b6dd6}{print\+Progress}} (double percentage)
 \item 
 void \mbox{\hyperlink{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}{generate\+\_\+gaussian\+\_\+kernel}} (std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&kernel, const int n, const float sigma=1)
 \begin{DoxyCompactList}\small\item\em Generate a 2D gaussian kernel. \end{DoxyCompactList}\item 
@@ -25,8 +38,9 @@ void \mbox{\hyperlink{main_8cpp_ac4471abfaac5b5b532bee65bf50f5f52}{apply\+\_\+ke
 \begin{DoxyCompactList}\small\item\em apply a convolution kernel to the entire image \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{main_8cpp_af3614cffdf8c1828b7af3daecf603795}{apply\+\_\+kernel\+\_\+multithreaded}} (const std\+::vector$<$ std\+::vector$<$ float $>$ $>$ \&kernel, const Mat \&original\+\_\+img, Mat \&new\+\_\+img)
 \begin{DoxyCompactList}\small\item\em apply a convolution kernel to the entire image using multiple threads (OMP) \end{DoxyCompactList}\item 
-\mbox{\Hypertarget{main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\label{main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}} 
-int {\bfseries main} (int argc, char $\ast$$\ast$argv)
+void \mbox{\hyperlink{main_8cpp_a8316295b173ea4b1ac8c3fe1f4373037}{stress\+\_\+test}} (const int \&n, const bool \&multi=true)
+\item 
+int \mbox{\hyperlink{main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char $\ast$$\ast$argv)
 \end{DoxyCompactItemize}
 
 
@@ -36,6 +50,33 @@ gaussian blurring using CPU
 \begin{DoxyAuthor}{Author}
 Arjun31415 
 \end{DoxyAuthor}
+
+
+Definition in file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{main_8cpp_a93f03159397f25c687840129b18c972d}\label{main_8cpp_a93f03159397f25c687840129b18c972d}} 
+\index{main.cpp@{main.cpp}!PBSTR@{PBSTR}}
+\index{PBSTR@{PBSTR}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{PBSTR}{PBSTR}}
+{\footnotesize\ttfamily \#define PBSTR~\char`\"{}$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$$\vert$\char`\"{}}
+
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00020}{20}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\mbox{\Hypertarget{main_8cpp_a69793e71975c25754a8236df29896e15}\label{main_8cpp_a69793e71975c25754a8236df29896e15}} 
+\index{main.cpp@{main.cpp}!PBWIDTH@{PBWIDTH}}
+\index{PBWIDTH@{PBWIDTH}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{PBWIDTH}{PBWIDTH}}
+{\footnotesize\ttfamily \#define PBWIDTH~60}
+
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00021}{21}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
 
 
 \doxysubsection{Function Documentation}
@@ -62,6 +103,10 @@ apply a convolution kernel to a pixel
 {\em c} & the column number of the current pixel \\
 \hline
 \end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00076}{76}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
 \mbox{\Hypertarget{main_8cpp_a2cc3b1ea968fd91ce8d6126cf08152c2}\label{main_8cpp_a2cc3b1ea968fd91ce8d6126cf08152c2}} 
 \index{main.cpp@{main.cpp}!apply\_convolution\_multi\_threaded@{apply\_convolution\_multi\_threaded}}
 \index{apply\_convolution\_multi\_threaded@{apply\_convolution\_multi\_threaded}!main.cpp@{main.cpp}}
@@ -85,6 +130,10 @@ apply a convolution kernel to a pixel using multiple threads (OMP)
 {\em c} & the column number of the current pixel \\
 \hline
 \end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00106}{106}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
 \mbox{\Hypertarget{main_8cpp_ac4471abfaac5b5b532bee65bf50f5f52}\label{main_8cpp_ac4471abfaac5b5b532bee65bf50f5f52}} 
 \index{main.cpp@{main.cpp}!apply\_kernel@{apply\_kernel}}
 \index{apply\_kernel@{apply\_kernel}!main.cpp@{main.cpp}}
@@ -104,6 +153,10 @@ apply a convolution kernel to the entire image
 {\em new\+\_\+img} & the output image \\
 \hline
 \end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00136}{136}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
 \mbox{\Hypertarget{main_8cpp_af3614cffdf8c1828b7af3daecf603795}\label{main_8cpp_af3614cffdf8c1828b7af3daecf603795}} 
 \index{main.cpp@{main.cpp}!apply\_kernel\_multithreaded@{apply\_kernel\_multithreaded}}
 \index{apply\_kernel\_multithreaded@{apply\_kernel\_multithreaded}!main.cpp@{main.cpp}}
@@ -123,6 +176,10 @@ apply a convolution kernel to the entire image using multiple threads (OMP)
 {\em new\+\_\+img} & the output image \\
 \hline
 \end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00155}{155}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
 \mbox{\Hypertarget{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}\label{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}} 
 \index{main.cpp@{main.cpp}!generate\_gaussian\_kernel@{generate\_gaussian\_kernel}}
 \index{generate\_gaussian\_kernel@{generate\_gaussian\_kernel}!main.cpp@{main.cpp}}
@@ -142,3 +199,37 @@ Generate a 2D gaussian kernel.
 {\em sigma} & the standard deviation of the gaussian kernel \\
 \hline
 \end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00039}{39}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\mbox{\Hypertarget{main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\label{main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}} 
+\index{main.cpp@{main.cpp}!main@{main}}
+\index{main@{main}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$$\ast$}]{argv }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00241}{241}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\mbox{\Hypertarget{main_8cpp_a9d3b483a858efb84ce776bed255b6dd6}\label{main_8cpp_a9d3b483a858efb84ce776bed255b6dd6}} 
+\index{main.cpp@{main.cpp}!printProgress@{printProgress}}
+\index{printProgress@{printProgress}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{printProgress()}{printProgress()}}
+{\footnotesize\ttfamily void print\+Progress (\begin{DoxyParamCaption}\item[{double}]{percentage }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00023}{23}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\mbox{\Hypertarget{main_8cpp_a8316295b173ea4b1ac8c3fe1f4373037}\label{main_8cpp_a8316295b173ea4b1ac8c3fe1f4373037}} 
+\index{main.cpp@{main.cpp}!stress\_test@{stress\_test}}
+\index{stress\_test@{stress\_test}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{stress\_test()}{stress\_test()}}
+{\footnotesize\ttfamily void stress\+\_\+test (\begin{DoxyParamCaption}\item[{const int \&}]{n,  }\item[{const bool \&}]{multi = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00170}{170}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+

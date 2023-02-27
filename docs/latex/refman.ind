@@ -1,72 +1,112 @@
 \begin{theindex}
 
   \item {add\_value}
-    \subitem {blur.cu}, \hyperpage{7}
+    \subitem {blur.cu}, \hyperpage{8}
   \item {apply\_convolution}
-    \subitem {main.cpp}, \hyperpage{15}
+    \subitem {main.cpp}, \hyperpage{24}
   \item {apply\_convolution\_multi\_threaded}
-    \subitem {main.cpp}, \hyperpage{16}
+    \subitem {main.cpp}, \hyperpage{25}
   \item {apply\_kernel}
-    \subitem {main.cpp}, \hyperpage{16}
+    \subitem {main.cpp}, \hyperpage{25}
   \item {apply\_kernel\_multithreaded}
-    \subitem {main.cpp}, \hyperpage{16}
+    \subitem {main.cpp}, \hyperpage{26}
 
   \indexspace
 
   \item {blur.cu}, \hyperpage{5}
-    \subitem {add\_value}, \hyperpage{7}
+    \subitem {add\_value}, \hyperpage{8}
     \subitem {call\_gaussian\_blur\_1d}, \hyperpage{8}
-    \subitem {call\_gaussian\_blur\_2d}, \hyperpage{8}
-    \subitem {gaussian\_blur}, \hyperpage{8, 9}
-    \subitem {gaussian\_blur\_exit}, \hyperpage{9}
-    \subitem {gaussian\_blur\_init}, \hyperpage{10}
-    \subitem {generate\_gaussian\_kernel\_1d}, \hyperpage{10}
-    \subitem {generate\_gaussian\_kernel\_2d}, \hyperpage{11}
-    \subitem {multiply\_value}, \hyperpage{11, 12}
+    \subitem {call\_gaussian\_blur\_2d}, \hyperpage{9}
+    \subitem {gaussian\_blur}, \hyperpage{9, 10}
+    \subitem {gaussian\_blur\_exit}, \hyperpage{10}
+    \subitem {gaussian\_blur\_init}, \hyperpage{11}
+    \subitem {gaussian\_blur\_x}, \hyperpage{11}
+    \subitem {gaussian\_blur\_y}, \hyperpage{12}
+    \subitem {generate\_gaussian\_kernel\_1d}, \hyperpage{12}
+    \subitem {generate\_gaussian\_kernel\_2d}, \hyperpage{13}
+    \subitem {ginput}, \hyperpage{18}
+    \subitem {goutput}, \hyperpage{18}
+    \subitem {main}, \hyperpage{13}
+    \subitem {multiply\_value}, \hyperpage{13, 14}
+    \subitem {PBSTR}, \hyperpage{7}
+    \subitem {PBWIDTH}, \hyperpage{7}
+    \subitem {printProgress}, \hyperpage{15}
     \subitem {SAFE\_CALL}, \hyperpage{7}
-    \subitem {set\_value}, \hyperpage{12, 13}
-    \subitem {subtract\_value}, \hyperpage{14}
+    \subitem {set\_value}, \hyperpage{15, 16}
+    \subitem {stress\_test}, \hyperpage{16}
+    \subitem {subtract\_value}, \hyperpage{17}
 
   \indexspace
 
   \item {call\_gaussian\_blur\_1d}
     \subitem {blur.cu}, \hyperpage{8}
   \item {call\_gaussian\_blur\_2d}
-    \subitem {blur.cu}, \hyperpage{8}
+    \subitem {blur.cu}, \hyperpage{9}
 
   \indexspace
 
   \item {gaussian\_blur}
-    \subitem {blur.cu}, \hyperpage{8, 9}
+    \subitem {blur.cu}, \hyperpage{9, 10}
   \item {gaussian\_blur\_exit}
-    \subitem {blur.cu}, \hyperpage{9}
+    \subitem {blur.cu}, \hyperpage{10}
   \item {gaussian\_blur\_init}
-    \subitem {blur.cu}, \hyperpage{10}
-  \item {generate\_gaussian\_kernel}
-    \subitem {main.cpp}, \hyperpage{17}
-  \item {generate\_gaussian\_kernel\_1d}
-    \subitem {blur.cu}, \hyperpage{10}
-  \item {generate\_gaussian\_kernel\_2d}
     \subitem {blur.cu}, \hyperpage{11}
+  \item {gaussian\_blur\_x}
+    \subitem {blur.cu}, \hyperpage{11}
+  \item {gaussian\_blur\_y}
+    \subitem {blur.cu}, \hyperpage{12}
+  \item {generate\_gaussian\_kernel}
+    \subitem {main.cpp}, \hyperpage{26}
+  \item {generate\_gaussian\_kernel\_1d}
+    \subitem {blur.cu}, \hyperpage{12}
+  \item {generate\_gaussian\_kernel\_2d}
+    \subitem {blur.cu}, \hyperpage{13}
+  \item {ginput}
+    \subitem {blur.cu}, \hyperpage{18}
+  \item {goutput}
+    \subitem {blur.cu}, \hyperpage{18}
 
   \indexspace
 
-  \item {main.cpp}, \hyperpage{14}
-    \subitem {apply\_convolution}, \hyperpage{15}
-    \subitem {apply\_convolution\_multi\_threaded}, \hyperpage{16}
-    \subitem {apply\_kernel}, \hyperpage{16}
-    \subitem {apply\_kernel\_multithreaded}, \hyperpage{16}
-    \subitem {generate\_gaussian\_kernel}, \hyperpage{17}
+  \item {main}
+    \subitem {blur.cu}, \hyperpage{13}
+    \subitem {main.cpp}, \hyperpage{26}
+  \item {main.cpp}, \hyperpage{23}
+    \subitem {apply\_convolution}, \hyperpage{24}
+    \subitem {apply\_convolution\_multi\_threaded}, \hyperpage{25}
+    \subitem {apply\_kernel}, \hyperpage{25}
+    \subitem {apply\_kernel\_multithreaded}, \hyperpage{26}
+    \subitem {generate\_gaussian\_kernel}, \hyperpage{26}
+    \subitem {main}, \hyperpage{26}
+    \subitem {PBSTR}, \hyperpage{24}
+    \subitem {PBWIDTH}, \hyperpage{24}
+    \subitem {printProgress}, \hyperpage{26}
+    \subitem {stress\_test}, \hyperpage{27}
   \item {multiply\_value}
-    \subitem {blur.cu}, \hyperpage{11, 12}
+    \subitem {blur.cu}, \hyperpage{13, 14}
+
+  \indexspace
+
+  \item {PBSTR}
+    \subitem {blur.cu}, \hyperpage{7}
+    \subitem {main.cpp}, \hyperpage{24}
+  \item {PBWIDTH}
+    \subitem {blur.cu}, \hyperpage{7}
+    \subitem {main.cpp}, \hyperpage{24}
+  \item {printProgress}
+    \subitem {blur.cu}, \hyperpage{15}
+    \subitem {main.cpp}, \hyperpage{26}
 
   \indexspace
 
   \item {SAFE\_CALL}
     \subitem {blur.cu}, \hyperpage{7}
   \item {set\_value}
-    \subitem {blur.cu}, \hyperpage{12, 13}
+    \subitem {blur.cu}, \hyperpage{15, 16}
+  \item {stress\_test}
+    \subitem {blur.cu}, \hyperpage{16}
+    \subitem {main.cpp}, \hyperpage{27}
   \item {subtract\_value}
-    \subitem {blur.cu}, \hyperpage{14}
+    \subitem {blur.cu}, \hyperpage{17}
 
 \end{theindex}

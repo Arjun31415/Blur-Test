@@ -1,0 +1,431 @@
+\hypertarget{blur_8cu_source}{}\doxysection{blur.\+cu}
+\mbox{\hyperlink{blur_8cu}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00007}00007\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00008}00008\ \textcolor{preprocessor}{\#undef\ \_\_noinline\_\_}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <cuda\_profiler\_api.h>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <cuda\_runtime.h>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00011}00011\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <opencv2/core/core.hpp>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <opencv2/core/cuda.hpp>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <opencv2/core/cuda/common.hpp>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00015}00015\ \textcolor{preprocessor}{\#include\ <opencv2/core/matx.hpp>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00016}00016\ \textcolor{preprocessor}{\#include\ <opencv2/cudaimgproc.hpp>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00017}00017\ \textcolor{preprocessor}{\#include\ <opencv2/highgui.hpp>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00018}00018\ \textcolor{preprocessor}{\#include\ <opencv2/opencv.hpp>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00019}00019\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00020}00020\ cv::cuda::GpuMat\ ginput,\ goutput;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00022}00022\ \textcolor{comment}{//\ Progress\ Bar\ STRing}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00023}00023\ \textcolor{preprocessor}{\#define\ PBSTR\ "{}||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"{}}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00024}00024\ \textcolor{preprocessor}{\#define\ PBWIDTH\ 60}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00025}00025\ \textcolor{keywordtype}{void}\ printProgress(\textcolor{keywordtype}{double}\ percentage)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00026}00026\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00027}00027\ \ \ \ \ \textcolor{keywordtype}{int}\ val\ =\ (int)(percentage\ *\ 100);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00028}00028\ \ \ \ \ \textcolor{keywordtype}{int}\ lpad\ =\ (int)(percentage\ *\ PBWIDTH);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00029}00029\ \ \ \ \ \textcolor{keywordtype}{int}\ rpad\ =\ PBWIDTH\ -\/\ lpad;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00030}00030\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)r\%3d\%\%\ [\%.*s\%*s]"{}},\ val,\ lpad,\ PBSTR,\ rpad,\ \textcolor{stringliteral}{"{}"{}});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00031}00031\ \ \ \ \ fflush(stdout);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00032}00032\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00043}00043\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \_safe\_cuda\_call(cudaError\ err,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *msg,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00044}00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *file\_name,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ line\_number)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00045}00045\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00046}00046\ \ \ \ \ \textcolor{keywordflow}{if}\ (err\ !=\ cudaSuccess)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00047}00047\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00048}00048\ \ \ \ \ \ \ \ \ fprintf(stderr,\ \textcolor{stringliteral}{"{}\%s\(\backslash\)n\(\backslash\)nFile:\ \%s\(\backslash\)n\(\backslash\)nLine\ Number:\ \%d\(\backslash\)n\(\backslash\)nReason:\ \%s\(\backslash\)n"{}},}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ msg,\ file\_name,\ line\_number,\ cudaGetErrorString(err));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00050}00050\ \ \ \ \ \ \ \ \ std::cin.get();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00051}00051\ \ \ \ \ \ \ \ \ exit(EXIT\_FAILURE);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00052}00052\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00053}00053\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00060}\mbox{\hyperlink{blur_8cu_a11d56285edea409bc2194736ee34496f}{00060}}\ \textcolor{preprocessor}{\#define\ SAFE\_CALL(call,\ msg)\ \_safe\_cuda\_call((call),\ (msg),\ \_\_FILE\_\_,\ \_\_LINE\_\_)}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00061}00061\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00070}\mbox{\hyperlink{blur_8cu_a0019adbb68eaf5f0c5176bbdf37ffcf1}{00070}}\ \_\_host\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a0019adbb68eaf5f0c5176bbdf37ffcf1}{generate\_gaussian\_kernel\_2d}}(\textcolor{keywordtype}{float}\ *kernel,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ n,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00071}00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ sigma\ =\ 1)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00072}00072\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00073}00073\ \ \ \ \ \textcolor{keywordtype}{int}\ mean\ =\ n\ /\ 2;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00074}00074\ \ \ \ \ \textcolor{keywordtype}{float}\ sumOfWeights\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00075}00075\ \ \ \ \ \textcolor{keywordtype}{float}\ p,\ q\ =\ 2.0\ *\ sigma\ *\ sigma;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00077}00077\ \ \ \ \ \textcolor{comment}{//\ Compute\ weights}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00078}00078\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00079}00079\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00080}00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ n;\ j++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00081}00081\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00082}00082\ \ \ \ \ \ \ \ \ \ \ \ \ p\ =\ sqrt((i\ -\/\ mean)\ *\ (i\ -\/\ mean)\ +\ (j\ -\/\ mean)\ *\ (j\ -\/\ mean));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00083}00083\ \ \ \ \ \ \ \ \ \ \ \ \ kernel[i\ *\ n\ +\ j]\ =\ std::exp((-\/(p\ *\ p)\ /\ q))\ /\ (M\_PI\ *\ q);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00084}00084\ \ \ \ \ \ \ \ \ \ \ \ \ sumOfWeights\ +=\ kernel[i\ *\ n\ +\ j];}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00085}00085\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00086}00086\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00087}00087\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00088}00088\ \ \ \ \ \textcolor{comment}{//\ Normalizing\ weights}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00089}00089\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00090}00090\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00091}00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ n;\ j++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00092}00092\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ kernel[i\ *\ n\ +\ j]\ /=\ sumOfWeights;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00094}00094\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00095}00095\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00096}00096\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00097}00097\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00106}\mbox{\hyperlink{blur_8cu_a53361b59233e810079be92f55e114c97}{00106}}\ \_\_host\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a53361b59233e810079be92f55e114c97}{generate\_gaussian\_kernel\_1d}}(\textcolor{keywordtype}{float}\ *kernel,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ n,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ sigma\ =\ 1)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00108}00108\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00109}00109\ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ values\ of\ the\ kernel}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00110}00110\ \ \ \ \ \textcolor{keywordtype}{float}\ sum\ =\ 0.0f;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00111}00111\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00112}00112\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00113}00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ x\ =\ i\ -\/\ (n\ -\/\ 1)\ /\ 2.0f;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00114}00114\ \ \ \ \ \ \ \ \ kernel[i]\ =\ std::exp(-\/x\ *\ x\ /\ (2\ *\ sigma\ *\ sigma));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00115}00115\ \ \ \ \ \ \ \ \ sum\ +=\ kernel[i];}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00116}00116\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00117}00117\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00118}00118\ \ \ \ \ \textcolor{comment}{//\ Normalize\ the\ kernel\ so\ that\ its\ sum\ equals\ 1}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00119}00119\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00120}00120\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00121}00121\ \ \ \ \ \ \ \ \ kernel[i]\ /=\ sum;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00122}00122\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00123}00123\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00131}\mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{00131}}\ \_\_device\_\_\ \_\_forceinline\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \&val,\ uchar\ \&out)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00132}00132\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00133}00133\ \ \ \ \ out\ =\ val;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00134}00134\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00135}00135\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00142}\mbox{\hyperlink{blur_8cu_abdf1ee45e30080fa51e17b617a0ec3fe}{00142}}\ \_\_device\_\_\ \_\_forceinline\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \&val,\ \textcolor{keywordtype}{float}\ \&out)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00143}00143\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00144}00144\ \ \ \ \ out\ =\ val;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00145}00145\ \};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00146}00146\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00154}\mbox{\hyperlink{blur_8cu_a3c78576172fab41162e1c4219f953259}{00154}}\ \_\_device\_\_\ \_\_forceinline\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \&val,\ float3\ \&out)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00155}00155\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00156}00156\ \ \ \ \ out.x\ =\ val,\ out.y\ =\ val,\ out.z\ =\ val;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00157}00157\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00158}00158\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00165}\mbox{\hyperlink{blur_8cu_ad25f4a845490ca37c3d351cd02bba638}{00165}}\ \_\_device\_\_\ \_\_forceinline\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(\textcolor{keyword}{const}\ float3\ \&val,\ uchar3\ \&out)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00166}00166\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00167}00167\ \ \ \ \ out.x\ =\ val.x;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00168}00168\ \ \ \ \ out.y\ =\ val.y;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00169}00169\ \ \ \ \ out.z\ =\ val.z;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00170}00170\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00177}\mbox{\hyperlink{blur_8cu_a760cb28843204b2d51b884f2cb0d5010}{00177}}\ \_\_device\_\_\ \_\_forceinline\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \&val,\ uchar3\ \&out)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00178}00178\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00179}00179\ \ \ \ \ out.x\ =\ val;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00180}00180\ \ \ \ \ out.y\ =\ val;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00181}00181\ \ \ \ \ out.z\ =\ val;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00182}00182\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00183}00183\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00192}\mbox{\hyperlink{blur_8cu_a92038f3008ef3bddea7e6a5eb27a0905}{00192}}\ \_\_device\_\_\ \_\_forceinline\_\_\ uchar3\ \mbox{\hyperlink{blur_8cu_a92038f3008ef3bddea7e6a5eb27a0905}{subtract\_value}}(uchar3\ in1,\ uchar3\ in2)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00193}00193\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00194}00194\ \ \ \ \ uchar3\ out;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00195}00195\ \ \ \ \ out.x\ =\ in1.x\ -\/\ in2.x;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00196}00196\ \ \ \ \ out.y\ =\ in1.y\ -\/\ in2.y;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00197}00197\ \ \ \ \ out.z\ =\ in1.z\ -\/\ in2.z;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00198}00198\ \ \ \ \ \textcolor{keywordflow}{return}\ out;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00199}00199\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00200}00200\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00208}\mbox{\hyperlink{blur_8cu_a23251bce37a6375316ee0f252fdadc20}{00208}}\ \_\_device\_\_\ \_\_forceinline\_\_\ float3\ \mbox{\hyperlink{blur_8cu_a23251bce37a6375316ee0f252fdadc20}{add\_value}}(float3\ in1,\ float3\ in2)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00209}00209\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00210}00210\ \ \ \ \ \textcolor{keywordflow}{return}\ \{in1.x\ +\ in2.x,\ in1.y\ +\ in2.y,\ in1.z\ +\ in2.z\};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00211}00211\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00212}00212\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00220}\mbox{\hyperlink{blur_8cu_abeac2ba94adfcea235a329248001bb0e}{00220}}\ \_\_device\_\_\ \_\_forceinline\_\_\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{blur_8cu_a23251bce37a6375316ee0f252fdadc20}{add\_value}}(\textcolor{keywordtype}{float}\ in1,\ \textcolor{keywordtype}{float}\ in2)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00221}00221\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00222}00222\ \ \ \ \ \textcolor{keywordflow}{return}\ in1\ +\ in2;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00223}00223\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00224}00224\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00233}\mbox{\hyperlink{blur_8cu_a5c51999a91d78aa4a6e73495895fec78}{00233}}\ \_\_device\_\_\ \_\_forceinline\_\_\ uchar\ \mbox{\hyperlink{blur_8cu_a92038f3008ef3bddea7e6a5eb27a0905}{subtract\_value}}(uchar\ in1,\ uchar\ in2)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00234}00234\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00235}00235\ \ \ \ \ \textcolor{keywordflow}{return}\ in1\ -\/\ in2;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00236}00236\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00245}\mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{00245}}\ \_\_device\_\_\ \_\_forceinline\_\_\ float3\ \mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{multiply\_value}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \&x,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00246}00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uchar3\ \&y)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00247}00247\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00248}00248\ \ \ \ \ \textcolor{keywordflow}{return}\ \{x\ *\ (float)y.x,\ x\ *\ (\textcolor{keywordtype}{float})y.y,\ x\ *\ (float)y.z\};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00249}00249\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00250}00250\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00259}\mbox{\hyperlink{blur_8cu_ac433435c14cd21ade5e60037f6afb1bd}{00259}}\ \_\_device\_\_\ \_\_forceinline\_\_\ float3\ \mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{multiply\_value}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \&x,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00260}00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ float3\ \&y)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00261}00261\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00262}00262\ \ \ \ \ \textcolor{keywordflow}{return}\ \{x\ *\ (float)y.x,\ x\ *\ (\textcolor{keywordtype}{float})y.y,\ x\ *\ (float)y.z\};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00263}00263\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00264}00264\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00272}\mbox{\hyperlink{blur_8cu_a56403ae4f620cc6e96118614b069bb25}{00272}}\ \_\_device\_\_\ \_\_forceinline\_\_\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{multiply\_value}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ \&x,\ \textcolor{keyword}{const}\ uchar\ \&y)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00273}00273\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00274}00274\ \ \ \ \ \textcolor{keywordflow}{return}\ x\ *\ (float)y;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00275}00275\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00276}00276\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00289}00289\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T\_in,\ \textcolor{keyword}{typename}\ T\_out,\ \textcolor{keyword}{typename}\ F\_cal>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00290}\mbox{\hyperlink{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}{00290}}\ \_\_global\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}{gaussian\_blur}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ *kernel,\ \textcolor{keywordtype}{int}\ n,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00291}00291\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ cv::cuda::PtrStepSz<T\_in>\ input,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00292}00292\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cuda::PtrStepSz<T\_out>\ output)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00293}00293\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00294}00294\ \ \ \ \ \textcolor{comment}{//\ calculate\ the\ x\ \&\ y\ position\ of\ the\ current\ image\ pixel}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00295}00295\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ x\ =\ blockIdx.x\ *\ blockDim.x\ +\ threadIdx.x;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00296}00296\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ y\ =\ blockIdx.y\ *\ blockDim.y\ +\ threadIdx.y;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00297}00297\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00298}00298\ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ >=\ input.cols\ ||\ y\ >=\ input.rows)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00299}00299\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00300}00300\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ mid\ =\ n\ /\ 2;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00301}00301\ \ \ \ \ F\_cal\ sum;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00302}00302\ \ \ \ \ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(0,\ sum);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00303}00303\ \ \ \ \ \textcolor{comment}{//\ synchronize\ all\ the\ threads\ till\ this\ potin}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00304}00304\ \ \ \ \ \_\_syncthreads();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00305}00305\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00306}00306\ \ \ \ \ \textcolor{comment}{//\ loop\ over\ the\ n\ x\ n\ neighborhood\ of\ the\ current\ pixel}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00307}00307\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ n;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00308}00308\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00309}00309\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <\ n;\ j++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00310}00310\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00311}00311\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ y\_idx\ =\ y\ +\ i\ -\/\ mid;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00312}00312\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ x\_idx\ =\ x\ +\ j\ -\/\ mid;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00313}00313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (y\_idx\ >\ input.rows\ ||\ x\_idx\ >\ input.cols)\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00314}00314\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ kernel\_val\ =\ kernel[(n\ -\/\ i\ -\/\ 1)\ *\ n\ +\ (n\ -\/\ j\ -\/\ 1)];}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00315}00315\ \ \ \ \ \ \ \ \ \ \ \ \ sum\ =}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00316}00316\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_a23251bce37a6375316ee0f252fdadc20}{add\_value}}(sum,\ \mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{multiply\_value}}(kernel\_val,\ input(y\_idx,\ x\_idx)));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00317}00317\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00318}00318\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00319}00319\ \ \ \ \ T\_out\ result;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00320}00320\ \ \ \ \ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(sum,\ result);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00321}00321\ \ \ \ \ output(y,\ x)\ =\ result;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00322}00322\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00335}00335\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T\_in,\ \textcolor{keyword}{typename}\ T\_out,\ \textcolor{keyword}{typename}\ F\_cal>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00336}\mbox{\hyperlink{blur_8cu_a8687a4eee31a74468570db30a29a31c9}{00336}}\ \_\_global\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a8687a4eee31a74468570db30a29a31c9}{gaussian\_blur\_x}}(\textcolor{keywordtype}{float}\ *kernel,\ \textcolor{keywordtype}{int}\ kernel\_size,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00337}00337\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ cv::cuda::PtrStepSz<T\_in>\ input,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00338}00338\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cuda::PtrStepSz<T\_out>\ output)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00339}00339\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00340}00340\ \ \ \ \ \textcolor{keywordtype}{int}\ x\ =\ blockIdx.x\ *\ blockDim.x\ +\ threadIdx.x;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00341}00341\ \ \ \ \ \textcolor{keywordtype}{int}\ y\ =\ blockIdx.y\ *\ blockDim.y\ +\ threadIdx.y;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00342}00342\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ radius\ =\ kernel\_size\ /\ 2;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00343}00343\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ width\ =\ input.cols;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00344}00344\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ height\ =\ input.rows;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00345}00345\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00346}00346\ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ >=\ input.cols\ ||\ y\ >=\ input.rows)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00347}00347\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00348}00348\ \ \ \ \ F\_cal\ pixel;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00349}00349\ \ \ \ \ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(0,\ pixel);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00350}00350\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00351}00351\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ -\/radius;\ i\ <=\ radius;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00352}00352\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00353}00353\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ idx\ =\ y\ *\ width\ +\ (x\ +\ i);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00354}00354\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ printf("{}\%d\(\backslash\)n"{},\ idx);\ */}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00355}00355\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (idx\ >=\ 0\ \&\&\ idx\ <\ width\ *\ height)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00356}00356\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00357}00357\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ weight\ =\ kernel[i\ +\ radius];}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00358}00358\ \ \ \ \ \ \ \ \ \ \ \ \ pixel\ =\ \mbox{\hyperlink{blur_8cu_a23251bce37a6375316ee0f252fdadc20}{add\_value}}(pixel,\ \mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{multiply\_value}}(weight,\ input[idx]));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00359}00359\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00360}00360\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00361}00361\ \ \ \ \ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(pixel,\ output(y,\ x));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00362}00362\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00363}00363\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00376}00376\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T\_in,\ \textcolor{keyword}{typename}\ T\_out,\ \textcolor{keyword}{typename}\ F\_cal>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00377}\mbox{\hyperlink{blur_8cu_a411df053a2d5e063133ed6c21a0cbd0c}{00377}}\ \_\_global\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a411df053a2d5e063133ed6c21a0cbd0c}{gaussian\_blur\_y}}(\textcolor{keywordtype}{float}\ *kernel,\ \textcolor{keywordtype}{int}\ kernel\_size,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00378}00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ cv::cuda::PtrStepSz<T\_in>\ input,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00379}00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cuda::PtrStepSz<T\_out>\ output)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00380}00380\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00381}00381\ \ \ \ \ \textcolor{keywordtype}{int}\ x\ =\ blockIdx.x\ *\ blockDim.x\ +\ threadIdx.x;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00382}00382\ \ \ \ \ \textcolor{keywordtype}{int}\ y\ =\ blockIdx.y\ *\ blockDim.y\ +\ threadIdx.y;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00383}00383\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ radius\ =\ kernel\_size\ /\ 2;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00384}00384\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ width\ =\ input.cols;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00385}00385\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ height\ =\ input.rows;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00386}00386\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00387}00387\ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ >=\ input.cols\ ||\ y\ >=\ input.rows)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00388}00388\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00389}00389\ \ \ \ \ F\_cal\ pixel;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00390}00390\ \ \ \ \ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(0,\ pixel);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00391}00391\ \ \ \ \ \textcolor{keywordtype}{float}\ weight\_sum\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00392}00392\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ -\/radius;\ i\ <=\ radius;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00393}00393\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00394}00394\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ idx\ =\ (y\ +\ i)\ *\ width\ +\ x;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00395}00395\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (idx\ >=\ 0\ \&\&\ idx\ <\ width\ *\ height)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00396}00396\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00397}00397\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ weight\ =\ kernel[i\ +\ radius];}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00398}00398\ \ \ \ \ \ \ \ \ \ \ \ \ pixel\ =\ \mbox{\hyperlink{blur_8cu_a23251bce37a6375316ee0f252fdadc20}{add\_value}}(pixel,\ \mbox{\hyperlink{blur_8cu_ac21e923466fc80283f1f47a0199b9291}{multiply\_value}}(weight,\ input[idx]));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00399}00399\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00400}00400\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00401}00401\ \ \ \ \ \mbox{\hyperlink{blur_8cu_adaadfc14abc7628758bf35ad3e19f1e5}{set\_value}}(pixel,\ output(y,\ x));\ \textcolor{comment}{//\ output(y,x)\ =\ pixel;}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00402}00402\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00403}00403\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00413}00413\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}...\ Ts>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00414}\mbox{\hyperlink{blur_8cu_aedfd621486f0d15a75a7e27662dc7c3d}{00414}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_aedfd621486f0d15a75a7e27662dc7c3d}{gaussian\_blur\_exit}}(\textcolor{keywordtype}{bool}\ remove\_globals,\ Ts\ \&\&...inputs)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00415}00415\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00416}00416\ \ \ \ \ \textcolor{keywordflow}{if}\ (remove\_globals)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00417}00417\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00418}00418\ \ \ \ \ \ \ \ \ ginput.release();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00419}00419\ \ \ \ \ \ \ \ \ goutput.release();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00420}00420\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00421}00421\ \ \ \ \ ([\&]\ \{\ \mbox{\hyperlink{blur_8cu_a11d56285edea409bc2194736ee34496f}{SAFE\_CALL}}(cudaFree(inputs),\ \textcolor{stringliteral}{"{}Unable\ to\ free"{}});\ \}(),\ ...);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00422}00422\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00423}00423\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00433}\mbox{\hyperlink{blur_8cu_a9dcf28fe26fd4268b2dcfdf08719d7c0}{00433}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a9dcf28fe26fd4268b2dcfdf08719d7c0}{call\_gaussian\_blur\_2d}}(\textcolor{keywordtype}{float}\ *d\_kernel,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \&n,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00434}00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ cv::cuda::GpuMat\ \&input,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00435}00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cuda::GpuMat\ \&output)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00436}00436\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00437}00437\ \ \ \ \ CV\_Assert(input.channels()\ ==\ 1\ ||\ input.channels()\ ==\ 3);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00438}00438\ \ \ \ \ \textcolor{keyword}{const}\ dim3\ block(16,\ 16);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00439}00439\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00440}00440\ \ \ \ \ \textcolor{comment}{//\ Calculate\ grid\ size\ to\ cover\ the\ whole\ image}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00441}00441\ \ \ \ \ \textcolor{keyword}{const}\ dim3\ grid(cv::cuda::device::divUp(input.cols,\ block.x),}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00442}00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cuda::device::divUp(input.rows,\ block.y));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00443}00443\ \ \ \ \ \textcolor{keywordflow}{if}\ (input.channels()\ ==\ 1)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00444}00444\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00445}00445\ \ \ \ \ \ \ \ \ gaussian\_blur<uchar,\ uchar,\ float>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00446}00446\ \ \ \ \ \ \ \ \ \ \ \ \ <<<grid,\ block>>>(d\_kernel,\ n,\ input,\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00447}00447\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00448}00448\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00449}00449\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (input.channels()\ ==\ 3)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00450}00450\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00451}00451\ \ \ \ \ \ \ \ \ gaussian\_blur<uchar3,\ uchar3,\ float3>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00452}00452\ \ \ \ \ \ \ \ \ \ \ \ \ <<<grid,\ block>>>(d\_kernel,\ n,\ input,\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00453}00453\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00454}00454\ \ \ \ \ cudaSafeCall(cudaGetLastError());}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00455}00455\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00466}\mbox{\hyperlink{blur_8cu_ab3a24e35eb1059ab0a7aa7376606fcee}{00466}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_ab3a24e35eb1059ab0a7aa7376606fcee}{call\_gaussian\_blur\_1d}}(\textcolor{keywordtype}{float}\ *d\_kernel,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \&n,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00467}00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ cv::cuda::GpuMat\ \&input,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00468}00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cuda::GpuMat\ \&output)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00469}00469\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00470}00470\ \ \ \ \ CV\_Assert(input.channels()\ ==\ 1\ ||\ input.channels()\ ==\ 3);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00471}00471\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ block\_size\ =\ 16;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00472}00472\ \ \ \ \ dim3\ dimBlock(block\_size,\ block\_size);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00473}00473\ \ \ \ \ dim3\ dimGrid(cv::cuda::device::divUp(input.cols,\ dimBlock.x),}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00474}00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cuda::device::divUp(input.rows,\ dimBlock.y));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00475}00475\ \ \ \ \ cv::cuda::GpuMat\ temp\ =\ input.clone();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00476}00476\ \ \ \ \ \textcolor{comment}{//\ Apply\ the\ horizontal\ Gaussian\ blur}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00477}00477\ \ \ \ \ \textcolor{keywordflow}{if}\ (input.channels()\ ==\ 1)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00478}00478\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00479}00479\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00480}00480\ \ \ \ \ \ \ \ \ gaussian\_blur\_x<uchar,\ uchar,\ float>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00481}00481\ \ \ \ \ \ \ \ \ \ \ \ \ <<<dimGrid,\ dimBlock>>>(d\_kernel,\ n,\ input,\ temp);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00482}00482\ \ \ \ \ \ \ \ \ gaussian\_blur\_y<uchar,\ uchar,\ float>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00483}00483\ \ \ \ \ \ \ \ \ \ \ \ \ <<<dimGrid,\ dimBlock>>>(d\_kernel,\ n,\ temp,\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00484}00484\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00485}00485\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (input.channels()\ ==\ 3)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00486}00486\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00487}00487\ \ \ \ \ \ \ \ \ gaussian\_blur\_x<uchar3,\ uchar3,\ float3>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00488}00488\ \ \ \ \ \ \ \ \ \ \ \ \ <<<dimGrid,\ dimBlock>>>(d\_kernel,\ n,\ input,\ temp);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00489}00489\ \ \ \ \ \ \ \ \ gaussian\_blur\_y<uchar3,\ uchar3,\ float3>}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00490}00490\ \ \ \ \ \ \ \ \ \ \ \ \ <<<dimGrid,\ dimBlock>>>(d\_kernel,\ n,\ temp,\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00491}00491\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00492}00492\ \ \ \ \ cudaSafeCall(cudaGetLastError());}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00493}00493\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00506}\mbox{\hyperlink{blur_8cu_ab98e5922cccda7c107a1a51493d97bd1}{00506}}\ \_\_host\_\_\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}{gaussian\_blur}}(\textcolor{keyword}{const}\ cv::Mat\ \&input,\ cv::Mat\ \&output,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00507}00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ n\ =\ 3,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ sigma\ =\ 1.0,}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00508}00508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ two\_d\ =\ \textcolor{keyword}{true},\ \textcolor{keywordtype}{bool}\ remove\_globals\ =\ \textcolor{keyword}{true})}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00509}00509\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00510}00510\ \ \ \ \ ginput.upload(input);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00511}00511\ \ \ \ \ std::vector<float>\ gauss\_kernel\_host;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00512}00512\ \ \ \ \ \textcolor{keywordtype}{float}\ *d\_gauss\_kernel;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00513}00513\ \ \ \ \ \textcolor{keywordflow}{if}\ (two\_d)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00514}00514\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00515}00515\ \ \ \ \ \ \ \ \ gauss\_kernel\_host\ =\ std::vector<float>(n\ *\ n);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00516}00516\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_a0019adbb68eaf5f0c5176bbdf37ffcf1}{generate\_gaussian\_kernel\_2d}}(gauss\_kernel\_host.data(),\ n,\ sigma);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00517}00517\ \ \ \ \ \ \ \ \ cudaMalloc((\textcolor{keywordtype}{void}\ **)\&d\_gauss\_kernel,\ n\ *\ n\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float}));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00518}00518\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_a11d56285edea409bc2194736ee34496f}{SAFE\_CALL}}(cudaMemcpy(d\_gauss\_kernel,\ gauss\_kernel\_host.data(),}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00519}00519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float})\ *\ n\ *\ n,\ cudaMemcpyHostToDevice),}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00520}00520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ copy\ kernel"{}});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00521}00521\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cudaProfilerStart();\ */}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00522}00522\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_a9dcf28fe26fd4268b2dcfdf08719d7c0}{call\_gaussian\_blur\_2d}}(d\_gauss\_kernel,\ n,\ ginput,\ goutput);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00523}00523\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cudaProfilerStop();\ */}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00524}00524\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00525}00525\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00526}00526\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00527}00527\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00528}00528\ \ \ \ \ \ \ \ \ gauss\_kernel\_host\ =\ std::vector<float>(n);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00529}00529\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_a53361b59233e810079be92f55e114c97}{generate\_gaussian\_kernel\_1d}}(gauss\_kernel\_host.data(),\ n,\ sigma);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00530}00530\ \ \ \ \ \ \ \ \ cudaMalloc((\textcolor{keywordtype}{void}\ **)\&d\_gauss\_kernel,\ n\ *\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float}));}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00531}00531\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_a11d56285edea409bc2194736ee34496f}{SAFE\_CALL}}(cudaMemcpy(d\_gauss\_kernel,\ gauss\_kernel\_host.data(),}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00532}00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{float})\ *\ n,\ cudaMemcpyHostToDevice),}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00533}00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Unable\ to\ copy\ kernel"{}});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00534}00534\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cudaProfilerStart();\ */}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00535}00535\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_ab3a24e35eb1059ab0a7aa7376606fcee}{call\_gaussian\_blur\_1d}}(d\_gauss\_kernel,\ n,\ ginput,\ goutput);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00536}00536\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ cudaProfilerStop();\ */}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00537}00537\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00538}00538\ \ \ \ \ \textcolor{comment}{//\ goutput.upload(input);}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00539}00539\ \ \ \ \ goutput.download(output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00540}00540\ \ \ \ \ \mbox{\hyperlink{blur_8cu_aedfd621486f0d15a75a7e27662dc7c3d}{gaussian\_blur\_exit}}(remove\_globals,\ d\_gauss\_kernel);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00541}00541\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00542}00542\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00549}\mbox{\hyperlink{blur_8cu_a74fff5eb6cbf35b2126ed8286e65214c}{00549}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{blur_8cu_a74fff5eb6cbf35b2126ed8286e65214c}{gaussian\_blur\_init}}(\textcolor{keyword}{const}\ cv::Mat\ \&input,\ cv::Mat\ \&output)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00550}00550\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00551}00551\ \ \ \ \ ginput.create(input.rows,\ input.cols,\ input.type());}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00552}00552\ \ \ \ \ goutput.create(output.rows,\ output.cols,\ output.type());}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00553}00553\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00554}00554\ \textcolor{keywordtype}{void}\ stress\_test(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \&n,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ \&two\_d)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00555}00555\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00556}00556\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Kernel\ size:\ "{}}\ <<\ n\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00557}00557\ \ \ \ \ \textcolor{keyword}{const}\ std::string\ path\ =\ \textcolor{stringliteral}{"{}../images/peppers\_color.tif"{}};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00558}00558\ \ \ \ \ cv::Mat\ input\ =\ cv::imread(path,\ 1);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00559}00559\ \ \ \ \ \textcolor{keyword}{auto}\ output\ =\ input.clone();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00560}00560\ \ \ \ \ \mbox{\hyperlink{blur_8cu_a74fff5eb6cbf35b2126ed8286e65214c}{gaussian\_blur\_init}}(input,\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00561}00561\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 100;\ i++)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00562}00562\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00563}00563\ \ \ \ \ \ \ \ \ printProgress((\textcolor{keywordtype}{float})i\ /\ 100);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00564}00564\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}{gaussian\_blur}}(input,\ output,\ n,\ 1.7,\ two\_d,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00565}00565\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00566}00566\ \ \ \ \ std::cout\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00567}00567\ \ \ \ \ ginput.release();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00568}00568\ \ \ \ \ goutput.release();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00569}00569\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00570}00570\ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00571}00571\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ **argv)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00572}00572\ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00573}00573\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00574}00574\ \ \ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 3)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00575}00575\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00576}00576\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}usage:\ Blur\_Test\ <kernel\_size>\ <Image\_Path>\ [<Output\_Path>]\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00577}00577\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00578}00578\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00579}00579\ \ \ \ \ std::string\ mTitle\ =\ \textcolor{stringliteral}{"{}Display\ Image"{}};}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00580}00580\ \ \ \ \ cv::Mat\ input;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00581}00581\ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ atoi(argv[1]);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00582}00582\ \ \ \ \ \textcolor{keywordflow}{if}\ (strncmp(argv[2],\ \textcolor{stringliteral}{"{}stress2d"{}},\ 8)\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00583}00583\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00584}00584\ \ \ \ \ \ \ \ \ stress\_test(n,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00585}00585\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00586}00586\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00587}00587\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strncmp(argv[2],\ \textcolor{stringliteral}{"{}stress1d"{}},\ 8)\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00588}00588\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00589}00589\ \ \ \ \ \ \ \ \ stress\_test(n,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00590}00590\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00591}00591\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00592}00592\ \ \ \ \ input\ =\ cv::imread(argv[2],\ 1);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00593}00593\ \ \ \ \ \textcolor{keywordflow}{if}\ (!input.data)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00594}00594\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00595}00595\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}No\ image\ data\ \(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00596}00596\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00597}00597\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00598}00598\ \ \ \ \ \textcolor{keyword}{auto}\ output\ =\ input.clone();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00599}00599\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00600}00600\ \ \ \ \ \textcolor{comment}{//\ Call\ the\ wrapper\ function}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00601}00601\ \ \ \ \ \mbox{\hyperlink{blur_8cu_a74fff5eb6cbf35b2126ed8286e65214c}{gaussian\_blur\_init}}(input,\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00602}00602\ \ \ \ \ \mbox{\hyperlink{blur_8cu_a49a19600bbc0b45e4b8f000d474324c1}{gaussian\_blur}}(input,\ output,\ n,\ 1.7,\ 0);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00603}00603\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00604}00604\ \ \ \ \ \textcolor{comment}{//\ Show\ the\ input\ and\ output}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00605}00605\ \ \ \ \ cv::imshow(\textcolor{stringliteral}{"{}Output"{}},\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00606}00606\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00607}00607\ \ \ \ \ \textcolor{comment}{//\ Wait\ for\ key\ press}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00608}00608\ \ \ \ \ cv::waitKey();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00609}00609\ \ \ \ \ namedWindow(mTitle,\ cv::WINDOW\_AUTOSIZE);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00610}00610\ \ \ \ \ \textcolor{comment}{/*\ namedWindow("{}gauss"{},\ cv::WINDOW\_AUTOSIZE);\ */}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00611}00611\ \ \ \ \ imshow(mTitle,\ input);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00612}00612\ \ \ \ \ \textcolor{comment}{/*\ imshow("{}gaussian"{},\ output);\ */}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00613}00613\ \ \ \ \ \textcolor{keywordflow}{if}\ (argc\ >=\ 4)\ imwrite(argv[3],\ output);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00614}00614\ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00615}00615\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00616}00616\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00617}00617\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ k\ =\ cv::waitKey(500);}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00618}00618\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (k\ ==\ 27)}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00619}00619\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00620}00620\ \ \ \ \ \ \ \ \ \ \ \ \ cv::destroyAllWindows();}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00621}00621\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00622}00622\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00623}00623\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cv::getWindowProperty(mTitle,\ cv::WND\_PROP\_VISIBLE)\ ==\ 0)\ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00624}00624\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00625}00625\ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00626}00626\ }
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00627}00627\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{blur_8cu_source_l00628}00628\ \}}
+
+\end{DoxyCode}
