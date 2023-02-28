@@ -162,93 +162,85 @@
 \DoxyCodeLine{\Hypertarget{main_8cpp_source_l00205}00205\ \ \ \ \ \ \ \ \ \ \ \ \ run\_times.push\_back(duration\_ms.count());}
 \DoxyCodeLine{\Hypertarget{main_8cpp_source_l00206}00206\ \ \ \ \ \ \ \ \ \}}
 \DoxyCodeLine{\Hypertarget{main_8cpp_source_l00207}00207\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00208}00208\ \ \ \ \ \textcolor{comment}{/*\ for\ (auto\ i\ =\ 0;\ i\ <\ num\_runs;\ i++)}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00209}00209\ \textcolor{comment}{\ \ \ \ \ \ \ \ std::cout\ <<\ run\_times[i]\ <<\ "{}\(\backslash\)t"{};\ */}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00210}00210\ \ \ \ \ sort(run\_times.begin(),\ run\_times.end());}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00211}00211\ \ \ \ \ \textcolor{keywordtype}{double}\ avg\ =\ std::accumulate(run\_times.begin(),\ run\_times.end(),\ 0.0)\ /}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00212}00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ run\_times.size();}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00213}00213\ \ \ \ \ \textcolor{keywordtype}{double}\ median\ =}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00214}00214\ \ \ \ \ \ \ \ \ ((run\_times.size()\ \%\ 2\ ==\ 0)\ ?\ (run\_times[run\_times.size()\ /\ 2\ -\/\ 1]\ +}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00215}00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ run\_times[run\_times.size()\ /\ 2])\ /}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00216}00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00217}00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ run\_times[run\_times.size()\ /\ 2]);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00218}00218\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00219}00219\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)nMax(ms)\(\backslash\)t\(\backslash\)tAvg(ms)\(\backslash\)t\(\backslash\)tMedian(ms)\(\backslash\)t\(\backslash\)tMin(ms)\(\backslash\)n"{}};}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00220}00220\ \ \ \ \ std::cout\ <<\ run\_times.back()\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\(\backslash\)t"{}}\ <<\ avg\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\(\backslash\)t"{}}\ <<\ median}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00221}00221\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00222}00222\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\(\backslash\)t"{}}\ <<\ run\_times.front()\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00223}00223\ \ \ \ \ std::fstream\ file(fname,\ std::ios::in\ |\ std::ios\_base::app);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00224}00224\ \ \ \ \ \textcolor{keywordflow}{if}\ (file.tellg()\ ==\ 0)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00225}00225\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00226}00226\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ write\ the\ headers\ if\ the\ file\ is\ empty}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00227}00227\ \ \ \ \ \ \ \ \ file\ <<\ \textcolor{stringliteral}{"{}KERNEL\_SIZE,MAX\_RUN\_TIME,MIN\_RUN\_TIME,AVG\_RUN\_TIME,MEDIAN\_RUN\_"{}}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00228}00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TIME"{}}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00229}00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ std::endl;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00230}00230\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00231}00231\ \ \ \ \ file\ <<\ n\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ run\_times.back()\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ run\_times.front()\ <<\ \textcolor{stringliteral}{"{},"{}}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00232}00232\ \ \ \ \ \ \ \ \ \ <<\ avg\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ median\ <<\ std::endl;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00233}00233\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00234}00234\ \ \ \ \ file.close();}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00235}00235\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00236}00236\ \ \ \ \ \textcolor{comment}{/*\ setenv("{}MAX\_RUN\_TIME"{},\ std::to\_string(run\_times.back()).c\_str(),\ 1);}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00237}00237\ \textcolor{comment}{\ \ \ \ setenv("{}MIN\_RUN\_TIME"{},\ std::to\_string(run\_times.front()).c\_str(),\ 1);}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00238}00238\ \textcolor{comment}{\ \ \ \ setenv("{}AVG\_RUN\_TIME"{},\ std::to\_string(avg).c\_str(),\ 1);}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00239}00239\ \textcolor{comment}{\ \ \ \ setenv("{}MEDIAN\_RUN\_TIME"{},\ std::to\_string(median).c\_str(),\ 1);\ */}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00240}00240\ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00241}00241\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ **argv)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00242}00242\ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00243}00243\ \ \ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 3)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00244}00244\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00245}00245\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}usage:\ Blur\_Test\ <kernel\_size>\ <Image\_Path>\ [<Output\_Path>]\(\backslash\)n"{}});}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00246}00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00247}00247\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00248}00248\ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ atoi(argv[1]);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00249}00249\ \ \ \ \ \textcolor{keywordflow}{if}\ (strncmp(argv[2],\ \textcolor{stringliteral}{"{}stressm"{}},\ 7)\ ==\ 0)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00250}00250\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00251}00251\ \ \ \ \ \ \ \ \ stress\_test(n,\ \textcolor{keyword}{true});}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00252}00252\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00253}00253\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00254}00254\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strncmp(argv[2],\ \textcolor{stringliteral}{"{}stress"{}},\ 6)\ ==\ 0)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00255}00255\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00256}00256\ \ \ \ \ \ \ \ \ stress\_test(n,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00257}00257\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00258}00258\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00259}00259\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00260}00260\ \ \ \ \ std::vector<std::vector<float>>\ gauss\_kernel(n,\ std::vector<float>(n));}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00261}00261\ \ \ \ \ \mbox{\hyperlink{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}{generate\_gaussian\_kernel}}(gauss\_kernel,\ n,\ 1.6);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00262}00262\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00263}00263\ \ \ \ \ std::string\ mTitle\ =\ \textcolor{stringliteral}{"{}Display\ Image"{}};}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00264}00264\ \ \ \ \ Mat\ image;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00265}00265\ \ \ \ \ image\ =\ imread(argv[2],\ 1);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00266}00266\ \ \ \ \ \textcolor{keywordflow}{if}\ (!image.data)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00267}00267\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00268}00268\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}No\ image\ data\ \(\backslash\)n"{}});}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00269}00269\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00270}00270\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00271}00271\ \ \ \ \ namedWindow(mTitle,\ WINDOW\_AUTOSIZE);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00272}00272\ \ \ \ \ \textcolor{keyword}{auto}\ new\_img\ =\ image.clone();}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00273}00273\ \ \ \ \ \textcolor{comment}{//\ namedWindow("{}gauss"{},\ WINDOW\_AUTOSIZE);}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00274}00274\ \ \ \ \ \mbox{\hyperlink{main_8cpp_af3614cffdf8c1828b7af3daecf603795}{apply\_kernel\_multithreaded}}(gauss\_kernel,\ image,\ new\_img);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00275}00275\ \ \ \ \ imshow(mTitle,\ image);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00276}00276\ \ \ \ \ imshow(\textcolor{stringliteral}{"{}gaussian"{}},\ new\_img);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00277}00277\ \ \ \ \ \textcolor{keywordflow}{if}\ (argc\ >=\ 4)\ imwrite(argv[3],\ new\_img);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00278}00278\ \ \ \ \ \textcolor{keywordflow}{do}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00279}00279\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00280}00280\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00281}00281\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ k\ =\ waitKey(500);}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00282}00282\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (k\ ==\ 27)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00283}00283\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00284}00284\ \ \ \ \ \ \ \ \ \ \ \ \ cv::destroyAllWindows();}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00285}00285\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00286}00286\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00287}00287\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cv::getWindowProperty(mTitle,\ WND\_PROP\_VISIBLE)\ ==\ 0)}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00288}00288\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00289}00289\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00290}00290\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00291}00291\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00292}00292\ }
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00293}00293\ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (\textcolor{keyword}{true});}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00294}00294\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
-\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00295}00295\ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00208}00208\ \ \ \ \ sort(run\_times.begin(),\ run\_times.end());}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00209}00209\ \ \ \ \ \textcolor{keywordtype}{double}\ avg\ =\ std::accumulate(run\_times.begin(),\ run\_times.end(),\ 0.0)\ /}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00210}00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ run\_times.size();}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00211}00211\ \ \ \ \ \textcolor{keywordtype}{double}\ median\ =}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00212}00212\ \ \ \ \ \ \ \ \ ((run\_times.size()\ \%\ 2\ ==\ 0)\ ?\ (run\_times[run\_times.size()\ /\ 2\ -\/\ 1]\ +}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00213}00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ run\_times[run\_times.size()\ /\ 2])\ /}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00214}00214\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 2}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00215}00215\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ run\_times[run\_times.size()\ /\ 2]);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00216}00216\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00217}00217\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)nMax(ms)\(\backslash\)t\(\backslash\)tAvg(ms)\(\backslash\)t\(\backslash\)tMedian(ms)\(\backslash\)t\(\backslash\)tMin(ms)\(\backslash\)n"{}};}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00218}00218\ \ \ \ \ std::cout\ <<\ run\_times.back()\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\(\backslash\)t"{}}\ <<\ avg\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\(\backslash\)t"{}}\ <<\ median}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00219}00219\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00220}00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}\(\backslash\)t\(\backslash\)t"{}}\ <<\ run\_times.front()\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00221}00221\ \ \ \ \ std::fstream\ file(fname,\ std::ios::in\ |\ std::ios\_base::app);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00222}00222\ \ \ \ \ \textcolor{keywordflow}{if}\ (file.tellg()\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00223}00223\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00224}00224\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ write\ the\ headers\ if\ the\ file\ is\ empty}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00225}00225\ \ \ \ \ \ \ \ \ file\ <<\ \textcolor{stringliteral}{"{}KERNEL\_SIZE,MAX\_RUN\_TIME,MIN\_RUN\_TIME,AVG\_RUN\_TIME,MEDIAN\_RUN\_"{}}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00226}00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}TIME"{}}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00227}00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00228}00228\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00229}00229\ \ \ \ \ file\ <<\ n\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ run\_times.back()\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ run\_times.front()\ <<\ \textcolor{stringliteral}{"{},"{}}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00230}00230\ \ \ \ \ \ \ \ \ \ <<\ avg\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ median\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00231}00231\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00232}00232\ \ \ \ \ file.close();}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00233}00233\ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00234}00234\ \textcolor{keywordtype}{int}\ main(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ **argv)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00235}00235\ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00236}00236\ \ \ \ \ \textcolor{keywordflow}{if}\ (argc\ <\ 3)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00237}00237\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00238}00238\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}usage:\ Blur\_Test\ <kernel\_size>\ <Image\_Path>\ [<Output\_Path>]\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00239}00239\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00240}00240\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00241}00241\ \ \ \ \ \textcolor{keywordtype}{int}\ n\ =\ atoi(argv[1]);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00242}00242\ \ \ \ \ \textcolor{keywordflow}{if}\ (strncmp(argv[2],\ \textcolor{stringliteral}{"{}stressm"{}},\ 7)\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00243}00243\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00244}00244\ \ \ \ \ \ \ \ \ stress\_test(n,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00245}00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00246}00246\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00247}00247\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (strncmp(argv[2],\ \textcolor{stringliteral}{"{}stress"{}},\ 6)\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00248}00248\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00249}00249\ \ \ \ \ \ \ \ \ stress\_test(n,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00250}00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00251}00251\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00252}00252\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00253}00253\ \ \ \ \ std::vector<std::vector<float>>\ gauss\_kernel(n,\ std::vector<float>(n));}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00254}00254\ \ \ \ \ \mbox{\hyperlink{main_8cpp_aee6c26bcb89a471d6240f9b3186defde}{generate\_gaussian\_kernel}}(gauss\_kernel,\ n,\ 1.6);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00255}00255\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00256}00256\ \ \ \ \ std::string\ mTitle\ =\ \textcolor{stringliteral}{"{}Display\ Image"{}};}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00257}00257\ \ \ \ \ Mat\ image;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00258}00258\ \ \ \ \ image\ =\ imread(argv[2],\ 1);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00259}00259\ \ \ \ \ \textcolor{keywordflow}{if}\ (!image.data)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00260}00260\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00261}00261\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}No\ image\ data\ \(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00262}00262\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00263}00263\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00264}00264\ \ \ \ \ namedWindow(mTitle,\ WINDOW\_AUTOSIZE);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00265}00265\ \ \ \ \ \textcolor{keyword}{auto}\ new\_img\ =\ image.clone();}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00266}00266\ \ \ \ \ \mbox{\hyperlink{main_8cpp_af3614cffdf8c1828b7af3daecf603795}{apply\_kernel\_multithreaded}}(gauss\_kernel,\ image,\ new\_img);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00267}00267\ \ \ \ \ imshow(mTitle,\ image);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00268}00268\ \ \ \ \ imshow(\textcolor{stringliteral}{"{}gaussian"{}},\ new\_img);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00269}00269\ \ \ \ \ \textcolor{keywordflow}{if}\ (argc\ >=\ 4)\ imwrite(argv[3],\ new\_img);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00270}00270\ \ \ \ \ \textcolor{keywordflow}{do}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00271}00271\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00272}00272\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00273}00273\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ k\ =\ waitKey(500);}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00274}00274\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (k\ ==\ 27)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00275}00275\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00276}00276\ \ \ \ \ \ \ \ \ \ \ \ \ cv::destroyAllWindows();}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00277}00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00278}00278\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00279}00279\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (cv::getWindowProperty(mTitle,\ WND\_PROP\_VISIBLE)\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00280}00280\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00281}00281\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00282}00282\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00283}00283\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00284}00284\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00285}00285\ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00286}00286\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00287}00287\ \}}
 
 \end{DoxyCode}

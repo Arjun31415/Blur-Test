@@ -1,0 +1,149 @@
+\hypertarget{md_Report_autotoc_md1}{}\doxysection{Abstract}\label{md_Report_autotoc_md1}
+Gaussian Blurring has numerous applications in various fields, including gaming, photography, video processing, and medical imaging, to name a few. Here are some examples of how Gaussian Blurring is used in different areas\+:
+
+Gaming\+: Gaussian Blurring is used in gaming to create realistic depth-\/of-\/field effects, which can simulate the way our eyes focus on objects in the real world. For example, in a first-\/person shooter game, blurring the background can make the player feel like they are focusing on a distant object. Another example is motion blur, which can simulate the way objects appear blurry when they are moving quickly.
+
+Photography\+: Gaussian Blurring is commonly used in photography to remove noise from images and to create soft-\/focus effects. It can also be used to smooth out skin tones in portraits and to create a bokeh effect, where the background of an image appears out of focus.
+
+Video processing\+: Gaussian Blurring is used in video processing to remove noise and to smooth out video frames. It is also used to create special effects, such as blurring out a face in a video to protect someone\textquotesingle{}s identity.
+
+Medical imaging\+: Gaussian Blurring is used in medical imaging to remove noise from images and to enhance the contrast between different structures in the image. For example, it can be used to enhance the edges of a tumor in a CT scan or MRI image.
+
+However the time complexity $(O(nmk^2))$ of a naive implementation of Gaussian Blurring can be quite high, which can result in slow performance. This is because the process of blurring an image involves convolving the image with a Gaussian kernel, which requires performing a large number of calculations for each pixel in the image. Furthermore, the naive implementation requires applying the kernel to each pixel in the image, which can result in redundant calculations. This can lead to further slow-\/downs in performance, especially for larger images.
+
+This project compares Gaussian Blurring implemented in both CPU and GPU architectures, and demonstrates the speed benefits of a separable 1D kernel versus a 2D kernel. Time complexity and performance measurements are used to analyse the differences between the two kernels on both the CPU and the GPU. Results show that a separable 1D kernel is faster than a 2D, and this proves that the speed benefits associated with a separable 1D kernel in image processing tasks extend across different hardware implementations.\hypertarget{md_Report_autotoc_md2}{}\doxysection{Dataset}\label{md_Report_autotoc_md2}
+This project uses the standard dataset for image proessing, sourced from \href{https://github.com/mohammadimtiazz/standard-test-images-for-Image-Processing}{\texttt{ here}}. The dataset consists of 24 images, which include grayscale, 256 bit color and 512 bit color of each unique image.\hypertarget{md_Report_autotoc_md3}{}\doxysection{Technologies Used -\/}\label{md_Report_autotoc_md3}
+
+\begin{DoxyEnumerate}
+\item Open\+CV -\/ For reading and writing images
+\item Open\+MP -\/ For parallelizing the CPU implementation
+\item CUDA -\/ For parallelizing the GPU implementation
+\end{DoxyEnumerate}\hypertarget{md_Report_autotoc_md4}{}\doxysection{Methodology}\label{md_Report_autotoc_md4}
+\hypertarget{md_Report_autotoc_md5}{}\doxysubsection{CPU -\/}\label{md_Report_autotoc_md5}
+
+\begin{DoxyEnumerate}
+\item The 2D kernel is first generated and then applied onto the image as a convolution.
+\item For parallelizing the CPU implementation, Open\+MP {\ttfamily \#pragma parallel for} compiler directive is used along with shared data to speed up. The separable kernel was not implemented for the CPU because, regardless of the implementation, the process is very slow as compared to GPU
+\end{DoxyEnumerate}\hypertarget{md_Report_autotoc_md6}{}\doxysubsection{GPU -\/}\label{md_Report_autotoc_md6}
+\hypertarget{md_Report_autotoc_md7}{}\doxysubsubsection{2\+D Kernel -\/}\label{md_Report_autotoc_md7}
+
+\begin{DoxyEnumerate}
+\item First the kernel is generated on the host (CPU).
+\item Then the image is loaded on the host.
+\item The image is then copied to the device (GPU) using Open\+CV API.
+\item The kernel is copied to the device using {\ttfamily cuda\+Memcpy()}.
+\item An output image is created on the GPU with the help of Open\+CV API.
+\item The blocks and grids are created, and the Convolution kernel is called with the required parameters.
+\item Synchronization of GPU threads takes place to ensure no race conditions during stress testing.
+\item The output image is copied back to the host (CPU) using Open\+CV API.
+\item The GPU memory is freed using {\ttfamily cuda\+Free()} and the images are freed using Open\+CV API.
+\end{DoxyEnumerate}\hypertarget{md_Report_autotoc_md8}{}\doxysubsubsection{Separable Kernel (1\+D) -\/}\label{md_Report_autotoc_md8}
+
+\begin{DoxyEnumerate}
+\item First a 1D kernel is generated on the host (CPU).
+\item The image is loaded on the host and then uploaded to the device (GPU).
+\item an outpuit image is created on the GPU with the help of Open\+CV API.
+\item first a convolution is applied along the horizontal axis (x-\/axis) on the original image. This output is stored in a temporary image.
+\item Now a convolution is applied along the vertical axis (y-\/axis) on the temporary image. This output is stored in the final output image.
+\item The final output image is downloaded to the host.
+\item The GPU memory is freed using {\ttfamily cuda\+Free()} and the images are freed using Open\+CV API.
+\end{DoxyEnumerate}\hypertarget{md_Report_autotoc_md9}{}\doxysection{Results -\/}\label{md_Report_autotoc_md9}
+\hypertarget{md_Report_autotoc_md10}{}\doxysubsection{Plots -\/}\label{md_Report_autotoc_md10}
+\hypertarget{md_Report_autotoc_md11}{}\doxysubsubsection{CPU -\/}\label{md_Report_autotoc_md11}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_cpu_single_threaded.png}
+\doxyfigcaption{Gaussian Blur CPU Single Threaded}
+\end{DoxyImage}
+   
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_cpu_multi_threaded.png}
+\doxyfigcaption{Gaussian Blur CPU Multiple Threaded}
+\end{DoxyImage}
+   
+
+{\bfseries{Comparing Single Threaded vs Multi Threaded}}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_cpu_comparison.png}
+\doxyfigcaption{Gaussian Blur CPU Comparison}
+\end{DoxyImage}
+   
+
+Average Speedup\+: 7.\+31 times\hypertarget{md_Report_autotoc_md12}{}\doxysubsubsection{GPU -\/}\label{md_Report_autotoc_md12}
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_2d.png}
+\doxyfigcaption{Gaussian Blur 2D kernel}
+\end{DoxyImage}
+   
+
+{\bfseries{Separable Kernel}} -\/  
+\begin{DoxyInlineImage}
+\includegraphics[height=\baselineskip,keepaspectratio=true]{gaussian_blur_x.png}%Gaussian Blur Separable Kernel Horizontal
+\end{DoxyInlineImage}
+   
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_y.png}
+\doxyfigcaption{Gaussian Blur Separable Kernel Vertical}
+\end{DoxyImage}
+   
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_x_y.png}
+\doxyfigcaption{Gaussian Blur Separable kernel}
+\end{DoxyImage}
+   
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_separable.png}
+\doxyfigcaption{Gaussian Blur Separable kernel total}
+\end{DoxyImage}
+   
+
+{\bfseries{Comparing 2D Kernel vs Separable Kernel -\/}}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_separable_vs_2d.png}
+\doxyfigcaption{Gaussian Blur GPU Comparison}
+\end{DoxyImage}
+   
+
+Average Speedup \+: 25.\+72 times
+
+{\bfseries{Comparing CPU vs GPU implementations -\/}}
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_single_threaded_vs_multi_threaded_vs_2d_vs_separable.png}
+\doxyfigcaption{Gaussian Blur CPU vs GPU comparison}
+\end{DoxyImage}
+   
+
+ 
+\begin{DoxyImage}
+\includegraphics[width=\textwidth,height=\textheight/2,keepaspectratio=true]{gaussian_blur_multi_threaded_vs_2d_vs_separable.png}
+\doxyfigcaption{Gaussian Blur CPU vs GPU}
+\end{DoxyImage}
+   
+
+Average Speedup \+: 2461.\+73 times\hypertarget{md_Report_autotoc_md13}{}\doxysection{Inference}\label{md_Report_autotoc_md13}
+Gaussian Blurring is a popular technique used in image processing to remove noise and smooth an image. In this project, the technique is implemented using both CPU and GPU computing.
+
+The CPU implementation first applies a 2D blur to the image, which is a computationally intensive task that involves convolving the image with a Gaussian kernel. This is done using a nested loop structure that applies the kernel to each pixel in the image.
+
+To improve the performance of the CPU implementation, a multithreaded version using Open\+MP is also implemented. This allows the kernel to be applied to multiple pixels simultaneously, reducing the total time taken to blur the image.
+
+The GPU implementation uses CUDA to accelerate the Gaussian blurring process. The image is transferred to the GPU, and the kernel is applied to each pixel in parallel using a grid of threads. This greatly reduces the time taken to blur the image compared to the CPU implementation.
+
+Finally, a separable kernel is used to further improve the performance of the GPU implementation. This involves breaking the Gaussian kernel into two 1D kernels, which can be applied separately in the x and y directions. This greatly reduces the number of computations required to apply the kernel, resulting in very high speedups.
+
+In summary, Gaussian Blurring using CPU and GPU is a computationally intensive task that can benefit greatly from parallel processing. By implementing a multithreaded version using Open\+MP and a GPU version using CUDA, the performance of the algorithm can be greatly improved. Using a separable kernel further improves the performance of the GPU implementation, resulting in very high speedups. 
