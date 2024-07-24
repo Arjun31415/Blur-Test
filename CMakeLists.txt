@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.26)
 project(blur_test LANGUAGES CXX CUDA)
-cmake_minimum_required(VERSION 3.24)
-find_package(CUDA REQUIRED)
+# find_package(CUDA REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(OpenMP REQUIRED)
 find_package(CUDAToolkit REQUIRED)
@@ -16,7 +16,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g")
 
 if(CUDAToolkit_VERSION VERSION_GREATER 10.2)
-  cuda_add_executable(blur_test_cuda blur.cu)
+  add_executable(blur_test_cuda blur.cu)
   target_compile_features(blur_test_cuda PRIVATE cxx_std_17)
   set_property(TARGET blur_test_cuda PROPERTY CUDA_ARCHITECTURES native)
   set_target_properties(

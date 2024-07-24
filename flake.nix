@@ -23,33 +23,60 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-        cudaPkg = pkgs.cudaPackages.cudatoolkit.override {cudaVersion = "12.1";};
+        # cudaPkg = pkgs.cudaPackages.cudatoolkit.override {cudaVersion = "12.2";};
+        cudaPackageSet = pkgs.cudaPackages.override {cudaVersion = "12.2";};
+        cudaPackages = [
+          cudaPackageSet.cudnn
+          cudaPackageSet.libcublas
+          cudaPackageSet.cuda_nvcc
+          cudaPackageSet.cuda_cudart
+          cudaPackageSet.cuda_profiler_api
+        ];
+        opencv4cuda = pkgs.opencv4.override {
+          enableCuda = true;
+          enableGtk3 = true;
+          # enableUnfree = true;
+        };
+        mkShell =
+          pkgs
+          .mkShell
+          .override
+          {stdenv = cudaPackageSet.backendStdenv;};
+        stdenv = cudaPackageSet.backendStdenv;
       in {
-        devShells.default = pkgs.mkShell rec {
+        devShells.default = mkShell {
+          inputsFrom = [config.packages.blur_test];
+
           packages = with pkgs; [
-            pkg-config
-            openssl
-            glxinfo
-            vscode-extensions.llvm-org.lldb-vscode
-            taplo
-            mdbook
-            glib-networking
-            cudaPkg
             inputs.nixgl.packages.${pkgs.system}.default
             inputs.nixgl.packages.${pkgs.system}.nixVulkanNvidia
-            cudaPackages.cudnn
-            typos
-            libxkbcommon
             libGL
             wayland
             vulkan-tools
             vulkan-loader
+            bear
             # flamegraph
             # samply
+            valgrind
           ];
-          LD_LIBRARY_PATH = "${lib.makeLibraryPath packages}:/run/opengl-driver-32/lib:${pkgs.libGL}/lib:${cudaPkg}/lib:${pkgs.wayland}/lib";
+          shellHook = ''
+            export CUDA_DIR=${lib.makeLibraryPath cudaPackages};
+          '';
         };
         formatter = pkgs.alejandra;
+        packages = rec {
+          blur_test = with pkgs;
+            stdenv
+            .mkDerivation {
+              name = "cvCuda_test";
+              src = ./.;
+
+              buildInputs =
+                [opencv4cuda valgrind] ++ cudaPackages;
+              nativeBuildInputs = with pkgs; [pkg-config libconfig cmake];
+            };
+          default = blur_test;
+        };
       };
     };
 }

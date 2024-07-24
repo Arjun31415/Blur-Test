@@ -5,3 +5,4 @@ CompileFlags:
     - --relocatable-device-code*
     - --use_fast_math
     - --generate-line-info
+    - -arch=native
